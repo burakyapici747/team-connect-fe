@@ -1,56 +1,61 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
-import { useFriendStore } from "@/store/features/friend-store"
-import { friendAPI } from "@/services/api/friend"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { useFriendStore } from "@/store/features/friend-store";
+import { friendAPI } from "@/services/api/friend";
 
 export default function DirectMessagePage({
   params,
 }: {
-  params: { conversationId: string }
+  params: { conversationId: string };
 }) {
-  const router = useRouter()
-  const { messages, setMessages, activeConversation, setActiveConversation } = useFriendStore()
+  const router = useRouter();
+  const { messages, setMessages, activeConversation, setActiveConversation } =
+    useFriendStore();
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const messages = await friendAPI.getDirectMessages(params.conversationId)
-        setMessages(messages)
+        const messages = await friendAPI.getDirectMessages(
+          params.conversationId
+        );
+        setMessages(messages);
       } catch (error) {
-        console.error("Failed to fetch messages:", error)
+        console.error("Failed to fetch messages:", error);
       }
-    }
+    };
 
     const fetchConversation = async () => {
       try {
-        const conversations = await friendAPI.getConversations()
-        const conversation = conversations.find((c) => c.id === params.conversationId)
+        const conversations = await friendAPI.getConversations();
+        const conversation = conversations.find(
+          (c) => c.id === params.conversationId
+        );
         if (conversation) {
-          setActiveConversation(conversation)
+          setActiveConversation(conversation);
         } else {
-          router.push("/channels/@me")
+          router.push("/channels/me");
         }
       } catch (error) {
-        console.error("Failed to fetch conversation:", error)
+        console.error("Failed to fetch conversation:", error);
       }
-    }
+    };
 
-    fetchMessages()
-    fetchConversation()
-  }, [params.conversationId, setMessages, setActiveConversation, router])
+    fetchMessages();
+    fetchConversation();
+  }, [params.conversationId, setMessages, setActiveConversation, router]);
 
   if (!activeConversation) {
-    return null
+    return null;
   }
 
   const otherParticipant =
     activeConversation.participantOne.id === "currentUserId"
       ? activeConversation.participantTwo
-      : activeConversation.participantOne
+      : activeConversation.participantOne;
 
   return (
     <div className="flex flex-col h-full">
@@ -63,7 +68,9 @@ export default function DirectMessagePage({
             </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#23A559] rounded-full border-2 border-[#313338]" />
           </div>
-          <span className="text-white font-semibold">{otherParticipant.username}</span>
+          <span className="text-white font-semibold">
+            {otherParticipant.username}
+          </span>
         </div>
       </div>
 
@@ -99,7 +106,13 @@ export default function DirectMessagePage({
             size="icon"
             className="text-[#B5BAC1] hover:text-white"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM17 13H13V17H11V13H7V11H11V7H13V11H17V13Z"
                 fill="currentColor"
@@ -114,5 +127,5 @@ export default function DirectMessagePage({
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}
