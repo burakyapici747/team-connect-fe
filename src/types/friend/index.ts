@@ -1,16 +1,12 @@
 import { User } from "../index"
 
-export type FriendStatus = "PENDING" | "ACCEPTED" | "BLOCKED"
-export type FriendRequestType = "INCOMING" | "OUTGOING"
+export type FriendStatus = "FRIEND" | "FRIEND" | "BLOCKED"
 
 export interface FriendRequest {
   id: string
-  senderId: string
-  receiverId: string
+  currentUser: User
+  otherUser: User
   status: FriendStatus
-  type: FriendRequestType
-  sender: User
-  receiver: User
   createdAt: string
   updatedAt: string
 }

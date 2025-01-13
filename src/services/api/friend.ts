@@ -4,7 +4,7 @@ import { fetchAPI } from "../api"
 export const friendAPI = {
   // Friend Requests
   getFriendRequests: async () => {
-    return fetchAPI<FriendRequest[]>("/friends/requests", {
+    return fetchAPI<FriendRequest[]>("/friends", {
       method: "GET",
     })
   },

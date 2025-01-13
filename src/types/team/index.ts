@@ -1,14 +1,9 @@
 import { User } from "../index"
 
-export type TeamType = "PUBLIC" | "PRIVATE"
-
 export interface Team {
   id: string
   name: string
-  description?: string
-  image?: string
-  type: TeamType
-  ownerId: string
+  description: string
   createdAt: string
   updatedAt: string
 }
