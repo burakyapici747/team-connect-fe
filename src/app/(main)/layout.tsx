@@ -1,18 +1,17 @@
-"use client"
+"use client";
 
-import { TeamSidebar } from "@/components/team/team-sidebar"
-import { ChannelSidebar } from "@/components/channel/channel-sidebar"
+import React from "react";
+import {TeamSidebar} from "@/components/team/team-sidebar";
+import {ChannelSidebar} from "@/components/channel/channel-sidebar";
 
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode
+export default function MainLayout({children,}: {
+    children: React.ReactNode;
 }) {
-  return (
-    <div className="h-screen flex">
-      <TeamSidebar />
-      <ChannelSidebar />
-      <main className="flex-1 bg-[#313338]">{children}</main>
-    </div>
-  )
-} 
+    return (
+        <div className="h-screen">
+            <TeamSidebar/>
+            <ChannelSidebar/>
+            <main className="flex-1 bg-[#313338]">{children}</main>
+        </div>
+    );
+}

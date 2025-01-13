@@ -1,40 +1,75 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/features/auth-store"
-import { authAPI } from "@/services/api"
+import React, {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {useAuthStore} from "@/store/features/auth-store";
+import {authAPI} from "@/services/api";
+import {DirectMessagesSidebar} from "@/components/friend/direct-messages-sidebar";
+import {TeamSidebar} from "@/components/team/team-sidebar";
 
-export default function ChannelsLayout({
-  children,
-}: {
-  children: React.ReactNode
+export default function ChannelsLayout({children}: {
+    children: React.ReactNode;
 }) {
-  const router = useRouter()
-  const { user, setUser } = useAuthStore()
+    const router = useRouter();
+    const {user, setUser} = useAuthStore();
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await authAPI.me()
-        setUser(response.user)
-      } catch (error) {
-        router.push("/login")
-      }
+    useEffect(() => {
+        let isActive = true;
+
+        const checkAuth = async () => {
+            if (!isActive) return;
+
+            try {
+                const response = await authAPI.me();
+                if (!isActive) return;
+
+                if (response?.data) {
+                    setUser(response.data);
+                } else {
+                    router.push("/login");
+                }
+            } catch (error) {
+                if (!isActive) return;
+                console.error("Auth hatası:", error);
+                router.push("/login");
+            } finally {
+                if (isActive) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        if (!user) {
+            checkAuth();
+        } else {
+            setIsLoading(false);
+        }
+
+        return () => {
+            isActive = false;
+        };
+    }, [router, setUser, user]);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-[#313338]">
+                <div className="text-white">Yükleniyor...</div>
+            </div>
+        );
     }
 
     if (!user) {
-      checkAuth()
+        return null;
     }
-  }, [user, setUser, router])
 
-  if (!user) {
-    return null
-  }
 
-  return (
-    <div className="flex h-screen">
-      {children}
-    </div>
-  )
-} 
+    return (
+        <>
+            <div className="flex h-screen">
+                <TeamSidebar/>
+                <main className="flex-1 bg-[#313338]">{children}</main>
+            </div>
+        </>
+    )
+}

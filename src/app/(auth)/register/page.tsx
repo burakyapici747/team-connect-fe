@@ -1,26 +1,39 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import * as z from "zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import * as z from "zod";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-import { registerSchema } from "@/lib/validations/auth"
-import { authAPI } from "@/services/api"
-import { useAuthStore } from "@/store"
+import { registerSchema } from "@/lib/validations/auth";
+import { authAPI } from "@/services/api";
+import { useAuthStore } from "@/store";
 
-type RegisterForm = z.infer<typeof registerSchema>
+type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const setUser = useAuthStore((state) => state.setUser)
+  const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
@@ -30,18 +43,18 @@ export default function RegisterPage() {
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      const { confirmPassword, ...registerData } = data
-      const response = await authAPI.register(registerData)
-      setUser(response.user)
-      router.push("/channels/@me")
+      const { confirmPassword, ...registerData } = data;
+      const response = await authAPI.register(registerData);
+      setUser(response.data);
+      router.push("/channels/me");
     } catch (error) {
-      console.error("Registration failed:", error)
+      console.error("Registration failed:", error);
     }
-  }
+  };
 
   return (
     <Card className="border-0 bg-transparent shadow-none">
@@ -155,5 +168,5 @@ export default function RegisterPage() {
         </Form>
       </CardContent>
     </Card>
-  )
-} 
+  );
+}

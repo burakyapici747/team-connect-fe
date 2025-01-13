@@ -26,7 +26,6 @@ export async function fetchAPI<T>(
     throw new APIError(response.status, await response.text())
   }
 
-  // Return null for 204 No Content
   if (response.status === 204) {
     return null as T
   }
