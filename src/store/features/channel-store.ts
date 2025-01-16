@@ -1,61 +1,20 @@
-import { create } from "zustand"
-import { Channel, ChannelCategory, ChannelWithMembers } from "@/types/channel"
+import { create } from "zustand";
+import { DMChannel } from "@/types/channel";
 
-interface ChannelStore {
-  channels: Channel[]
-  categories: ChannelCategory[]
-  activeChannel: ChannelWithMembers | null
-  setChannels: (channels: Channel[]) => void
-  setCategories: (categories: ChannelCategory[]) => void
-  setActiveChannel: (channel: ChannelWithMembers | null) => void
-  addChannel: (channel: Channel) => void
-  updateChannel: (channelId: string, updates: Partial<Channel>) => void
-  removeChannel: (channelId: string) => void
-  addCategory: (category: ChannelCategory) => void
-  updateCategory: (categoryId: string, updates: Partial<ChannelCategory>) => void
-  removeCategory: (categoryId: string) => void
-  reorderChannels: (categoryId: string, channels: Channel[]) => void
-  reorderCategories: (categories: ChannelCategory[]) => void
+interface DMChannelStore {
+  channels: DMChannel[];
+  activeChannel: DMChannel | null;
+  setDMChannels: (channels: DMChannel[]) => void;
+  addChannel: (channel: DMChannel) => void;
 }
 
-export const useChannelStore = create<ChannelStore>((set) => ({
+export const useDMChannelStore = create<DMChannelStore>((set) => ({
   channels: [],
   categories: [],
   activeChannel: null,
-  setChannels: (channels) => set({ channels }),
-  setCategories: (categories) => set({ categories }),
-  setActiveChannel: (channel) => set({ activeChannel: channel }),
+  setDMChannels: (channels) => set({ channels }),
   addChannel: (channel) =>
-    set((state) => ({ channels: [...state.channels, channel] })),
-  updateChannel: (channelId, updates) =>
     set((state) => ({
-      channels: state.channels.map((channel) =>
-        channel.id === channelId ? { ...channel, ...updates } : channel
-      ),
+      channels: [...state.channels, channel],
     })),
-  removeChannel: (channelId) =>
-    set((state) => ({
-      channels: state.channels.filter((channel) => channel.id !== channelId),
-    })),
-  addCategory: (category) =>
-    set((state) => ({ categories: [...state.categories, category] })),
-  updateCategory: (categoryId, updates) =>
-    set((state) => ({
-      categories: state.categories.map((category) =>
-        category.id === categoryId ? { ...category, ...updates } : category
-      ),
-    })),
-  removeCategory: (categoryId) =>
-    set((state) => ({
-      categories: state.categories.filter(
-        (category) => category.id !== categoryId
-      ),
-    })),
-  reorderChannels: (categoryId, channels) =>
-    set((state) => ({
-      categories: state.categories.map((category) =>
-        category.id === categoryId ? { ...category, channels } : category
-      ),
-    })),
-  reorderCategories: (categories) => set({ categories }),
-})) 
+}));

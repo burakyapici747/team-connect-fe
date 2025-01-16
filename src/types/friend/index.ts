@@ -11,7 +11,7 @@ export interface FriendRequest {
   updatedAt: string
 }
 
-export interface DirectMessage {
+export interface Channels {
   id: string
   senderId: string
   receiverId: string
@@ -21,12 +21,3 @@ export interface DirectMessage {
   createdAt: string
   updatedAt: string
 }
-
-export interface Conversation {
-  id: string
-  participantOne: User
-  participantTwo: User
-  lastMessage?: DirectMessage
-  unreadCount: number
-  updatedAt: string
-} 
