@@ -4,8 +4,9 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useAuthStore} from "@/store/features/auth-store";
 import {authAPI} from "@/services/api";
-import {DirectMessagesSidebar} from "@/components/friend/direct-messages-sidebar";
+import {DMChannelSidebar} from "@/components/friend/direct-messages-sidebar";
 import {TeamSidebar} from "@/components/team/team-sidebar";
+import {ChannelSidebar} from "@/components/channel/channel-sidebar";
 
 export default function ChannelsLayout({children}: {
     children: React.ReactNode;
@@ -68,6 +69,7 @@ export default function ChannelsLayout({children}: {
         <>
             <div className="flex h-screen">
                 <TeamSidebar/>
+                <DMChannelSidebar/>
                 <main className="flex-1 bg-[#313338]">{children}</main>
             </div>
         </>

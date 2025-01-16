@@ -2,7 +2,6 @@ import { FriendRequest, DirectMessage, Conversation } from "@/types/friend"
 import { fetchAPI } from "../api"
 
 export const friendAPI = {
-  // Friend Requests
   getFriendRequests: async () => {
     return fetchAPI<FriendRequest[]>("/friends", {
       method: "GET",
@@ -34,15 +33,8 @@ export const friendAPI = {
     })
   },
 
-  // Direct Messages
-  getConversations: async () => {
-    return fetchAPI<Conversation[]>("/friends/conversations", {
-      method: "GET",
-    })
-  },
-
-  getDirectMessages: async (userId: string) => {
-    return fetchAPI<DirectMessage[]>(`/friends/messages/${userId}`, {
+  getMeChannels: async (userId: string) => {
+    return fetchAPI<DirectMessage[]>(`/channels/me${userId}`, {
       method: "GET",
     })
   },
