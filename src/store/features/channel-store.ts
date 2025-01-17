@@ -10,7 +10,6 @@ interface DMChannelStore {
 
 export const useDMChannelStore = create<DMChannelStore>((set) => ({
   channels: [],
-  categories: [],
   activeChannel: null,
   setDMChannels: (channels) => set({ channels }),
   addChannel: (channel) =>
