@@ -12,7 +12,6 @@ export default function DirectMessagePage({params}: { params: { channelId: strin
     useEffect(() => {
         (async () => {
             try {
-                debugger;
                 const response = await messageAPI.getMessagesByChannelId(params.channelId);
                 if (Array.isArray(response)) {
                     setMessages(response);
@@ -54,12 +53,12 @@ export default function DirectMessagePage({params}: { params: { channelId: strin
                         <div>
                             <div className="flex items-center gap-2">
                 <span className="text-white font-medium">
-                  {message.sender.id === "currentUserId"
+                  {message.authorId === "currentUserId"
                       ? "You"
-                      : message.sender.username}
+                      : message.timestamp}
                 </span>
                                 <span className="text-xs text-[#B5BAC1]">
-                  {new Date(message.createdAt).toLocaleTimeString()}
+                  {new Date(message.timestamp).toLocaleTimeString()}
                 </span>
                             </div>
                             <p className="text-[#DBDEE1]">{message.content}</p>
