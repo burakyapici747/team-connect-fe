@@ -4,9 +4,8 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {useAuthStore} from "@/store/features/auth-store";
 import {authAPI} from "@/services/api";
-import {DMChannelSidebar} from "@/components/friend/direct-messages-sidebar";
+import {DMChannelSidebar} from "@/components/channel/DM-channel-sidebar";
 import {TeamSidebar} from "@/components/team/team-sidebar";
-import {ChannelSidebar} from "@/components/channel/channel-sidebar";
 
 export default function ChannelsLayout({children}: {
     children: React.ReactNode;

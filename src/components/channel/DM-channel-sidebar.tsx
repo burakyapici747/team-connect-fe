@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDMChannelStore } from "@/store/features/channel-store";
 import { channelAPI } from "@/services/api/channel";
 import { DMChannel } from "@/types/channel";
+import { Users, UserPlus, Clock, Ban, MoreVertical } from "lucide-react";
 
 export function DMChannelSidebar() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export function DMChannelSidebar() {
       <div className="flex items-center p-4 h-12 shadow-sm">
         <input
           type="text"
-          placeholder="Find a conversation"
+          placeholder="Find or start a conversation"
           className="w-full px-2 py-1 text-sm bg-[#1E1F22] text-white rounded focus:outline-none"
         />
       </div>
@@ -43,22 +44,11 @@ export function DMChannelSidebar() {
       {/* Friends Button */}
       <Button
         variant="ghost"
-        className="flex items-center gap-2 px-2 py-1 mx-2 mt-2 text-[#B5BAC1] hover:text-white hover:bg-[#35373C]"
+        className="flex items-center gap-2 w-full px-2 py-2 mx-2 mt-2 text-[#B5BAC1] hover:text-white hover:bg-[#35373C] rounded-[4px]"
         onClick={() => router.push("/channels/me")}
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"
-            fill="currentColor"
-          />
-        </svg>
-        <span>Friends</span>
+        <Users className="w-5 h-5" />
+        <span className="flex-1 text-left">Friends</span>
       </Button>
 
       {/* Direct Messages */}
@@ -69,7 +59,7 @@ export function DMChannelSidebar() {
         <Button
           variant="ghost"
           size="icon"
-          className="w-4 h-4 text-[#B5BAC1] hover:text-white"
+          className="w-4 h-4 text-[#B5BAC1] hover:text-white hover:bg-transparent"
         >
           <svg
             width="16"
@@ -92,7 +82,7 @@ export function DMChannelSidebar() {
           <Button
             key={channel.id}
             variant="ghost"
-            className="flex items-center w-full gap-2 px-2 py-1 mb-1 min-h-[44px] text-[#B5BAC1] hover:text-white hover:bg-[#35373C] rounded-[4px]"
+            className="flex items-center w-full gap-2 px-2 py-1 mb-1 min-h-[44px] text-[#B5BAC1] hover:text-white hover:bg-[#35373C] rounded-[4px] group"
             onClick={() => router.push(`/channels/me/${channel.id}`)}
           >
             <div className="relative flex-shrink-0">
@@ -134,13 +124,39 @@ export function DMChannelSidebar() {
               </div>
               {channel.lastMessageId && (
                 <div className="text-xs text-[#949BA4] truncate leading-4">
-                  Son mesaj
+                  Last message
                 </div>
               )}
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-8 h-8 text-[#B5BAC1] opacity-0 group-hover:opacity-100 hover:text-white hover:bg-transparent"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </Button>
           </Button>
         ))}
       </ScrollArea>
+
+      {/* User Profile */}
+      <div className="mt-auto p-2 bg-[#232428]">
+        <Button
+          variant="ghost"
+          className="w-full h-[52px] px-2 rounded-md hover:bg-[#35373C] flex items-center gap-2"
+        >
+          <div className="relative">
+            <div className="w-8 h-8 rounded-full bg-[#5865F2] flex items-center justify-center">
+              <span className="text-white text-sm font-medium">U</span>
+            </div>
+            <div className="absolute bottom-0 right-0 w-[14px] h-[14px] bg-[#23A559] rounded-full border-[2.5px] border-[#232428]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-white truncate">Username</p>
+            <p className="text-xs text-[#B5BAC1] truncate">Online</p>
+          </div>
+        </Button>
+      </div>
     </div>
   );
 }
