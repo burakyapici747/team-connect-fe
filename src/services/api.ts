@@ -1,11 +1,12 @@
-import { AuthResponse } from "@/types"
+import { AuthResponse } from "@/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1/api"
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1/api";
 
 export class APIError extends Error {
   constructor(public status: number, message: string) {
-    super(message)
-    this.name = "APIError"
+    super(message);
+    this.name = "APIError";
   }
 }
 
@@ -20,17 +21,17 @@ export async function fetchAPI<T>(
       ...options.headers,
     },
     credentials: "include",
-  })
+  });
 
   if (!response.ok) {
-    throw new APIError(response.status, await response.text())
+    throw new APIError(response.status, await response.text());
   }
 
   if (response.status === 204) {
-    return null as T
+    return null as T;
   }
 
-  return response.json()
+  return response.json();
 }
 
 export const authAPI = {
@@ -42,33 +43,33 @@ export const authAPI = {
       },
       body: JSON.stringify({ email, password }),
       credentials: "include",
-    })
+    });
 
     if (!response.ok) {
-      throw new APIError(response.status, await response.text())
+      throw new APIError(response.status, await response.text());
     }
   },
 
   register: async (data: {
-    username: string
-    email: string
-    password: string
+    username: string;
+    email: string;
+    password: string;
   }): Promise<AuthResponse> => {
     return fetchAPI<AuthResponse>("/users", {
       method: "POST",
       body: JSON.stringify(data),
-    })
+    });
   },
 
   logout: async (): Promise<void> => {
     return fetchAPI("/auth/logout", {
       method: "POST",
-    })
+    });
   },
 
   me: async (): Promise<AuthResponse> => {
     return fetchAPI<AuthResponse>("/users/me", {
       method: "GET",
-    })
+    });
   },
-}
+};
