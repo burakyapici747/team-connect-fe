@@ -27,12 +27,14 @@ import {
 import { loginSchema } from "@/lib/validations/auth";
 import { authAPI } from "@/services/api";
 import { useAuthStore } from "@/store";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
+  const { fetchUserData } = useCurrentUser();
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -44,12 +46,13 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      // First, login to get the cookie
+      // Login işlemi
       await authAPI.login(data.email, data.password);
 
-      // Then, fetch user data using the cookie
-      const response = await authAPI.me();
-      setUser(response.data);
+      // User ve profile bilgilerini al ve store'a kaydet
+      await fetchUserData();
+
+      // Ana sayfaya yönlendir
       router.push("/channels/me");
     } catch (error) {
       console.error("Login failed:", error);
