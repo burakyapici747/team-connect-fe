@@ -1,4 +1,4 @@
-import { AuthResponse } from "@/types";
+import { AuthResponse } from "@/types/authentication";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1/api";
@@ -34,6 +34,28 @@ export async function fetchAPI<T>(
   return response.json();
 }
 
+export const api = {
+  get: <T>(endpoint: string) =>
+    fetchAPI<{ data: T }>(endpoint, { method: "GET" }),
+  post: <T>(endpoint: string, data?: any) =>
+    fetchAPI<{ data: T }>(endpoint, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  put: <T>(endpoint: string, data: any) =>
+    fetchAPI<{ data: T }>(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+  patch: <T>(endpoint: string, data: any) =>
+    fetchAPI<{ data: T }>(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+  delete: <T>(endpoint: string) =>
+    fetchAPI<{ data: T }>(endpoint, { method: "DELETE" }),
+};
+
 export const authAPI = {
   login: async (email: string, password: string): Promise<void> => {
     const response = await fetch(`${API_URL}/auth`, {
@@ -67,9 +89,7 @@ export const authAPI = {
     });
   },
 
-  me: async (): Promise<AuthResponse> => {
-    return fetchAPI<AuthResponse>("/users/me", {
-      method: "GET",
-    });
+  me: async (): Promise<{ data: AuthResponse }> => {
+    return api.get<AuthResponse>("/users/me");
   },
 };
