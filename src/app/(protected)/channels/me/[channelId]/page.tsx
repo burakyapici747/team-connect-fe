@@ -1,13 +1,13 @@
 "use client";
 
-import {useEffect} from "react";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Button} from "@/components/ui/button";
-import {messageAPI} from "@/services/api/message";
-import {useMessageStore} from "@/store/features/message-store";
+import { useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { messageAPI } from "@/services/api/message";
+import { useMessageStore } from "@/store/features/message-store";
 
-export default function DirectMessagePage({params}: { params: { channelId: string }; }) {
-    const {messages = [], setMessages} = useMessageStore();
+export default function DirectMessagePage({ params }: { params: { channelId: string }; }) {
+    const { messages = [], setMessages } = useMessageStore();
 
     useEffect(() => {
         (async () => {
@@ -36,10 +36,10 @@ export default function DirectMessagePage({params}: { params: { channelId: strin
                             {/* Avatar would go here */}
                         </div>
                         <div
-                            className="absolute bottom-0 right-0 w-3 h-3 bg-[#23A559] rounded-full border-2 border-[#313338]"/>
+                            className="absolute bottom-0 right-0 w-3 h-3 bg-[#23A559] rounded-full border-2 border-[#313338]" />
                     </div>
                     <span className="text-white font-semibold">
-          </span>
+                    </span>
                 </div>
             </div>
 
@@ -52,14 +52,14 @@ export default function DirectMessagePage({params}: { params: { channelId: strin
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
-                <span className="text-white font-medium">
-                  {message.authorId === "currentUserId"
-                      ? "You"
-                      : message.timestamp}
-                </span>
+                                <span className="text-white font-medium">
+                                    {message.authorId === "currentUserId"
+                                        ? "You"
+                                        : message.timestamp}
+                                </span>
                                 <span className="text-xs text-[#B5BAC1]">
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </span>
+                                    {new Date(message.timestamp).toLocaleTimeString()}
+                                </span>
                             </div>
                             <p className="text-[#DBDEE1]">{message.content}</p>
                         </div>

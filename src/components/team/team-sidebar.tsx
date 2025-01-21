@@ -81,7 +81,7 @@ export function TeamSidebar() {
         <Separator className="h-[2px] w-8 bg-[#2D2F32] rounded-full mx-auto" />
 
         {/* Team List */}
-        <div className="flex-1 w-full overflow-y-auto space-y-3 px-3">
+        <div className="flex-1 w-full overflow-y-auto space-y-3 px-3 scrollbar-hide">
           {Array.isArray(teams) &&
             teams.map((team) => (
               <div key={team.id} className="relative group w-[48px]">

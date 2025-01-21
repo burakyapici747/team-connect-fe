@@ -39,17 +39,16 @@ const ProfileSection = () => {
                 className="w-8 h-8 rounded-full"
               />
               <div
-                className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#232428] ${
-                  status === "online"
-                    ? "bg-[#23A559]"
-                    : status === "idle"
+                className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#232428] ${status === "online"
+                  ? "bg-[#23A559]"
+                  : status === "idle"
                     ? "bg-[#F0B232]"
                     : status === "dnd"
-                    ? "bg-[#F23F43]"
-                    : status === "invisible"
-                    ? "bg-[#80848E]"
-                    : "bg-[#80848E]"
-                }`}
+                      ? "bg-[#F23F43]"
+                      : status === "invisible"
+                        ? "bg-[#80848E]"
+                        : "bg-[#80848E]"
+                  }`}
               />
             </div>
             <div className="flex flex-col items-start">
@@ -86,15 +85,14 @@ const ProfileSection = () => {
                     />
                   </div>
                   <div
-                    className={`absolute bottom-1 right-1 w-[18px] h-[18px] rounded-full border-[3px] border-[#1E1F22] ${
-                      status === "online"
-                        ? "bg-[#23A559]"
-                        : status === "idle"
+                    className={`absolute bottom-1 right-1 w-[18px] h-[18px] rounded-full border-[3px] border-[#1E1F22] ${status === "online"
+                      ? "bg-[#23A559]"
+                      : status === "idle"
                         ? "bg-[#F0B232]"
                         : status === "dnd"
-                        ? "bg-[#F23F43]"
-                        : "bg-[#80848E]"
-                    }`}
+                          ? "bg-[#F23F43]"
+                          : "bg-[#80848E]"
+                      }`}
                   />
                 </div>
 
@@ -131,26 +129,25 @@ const ProfileSection = () => {
                 <DropdownMenuSubTrigger className="w-full px-2 py-2.5 hover:bg-[#5865F2] hover:text-white rounded-[3px] cursor-pointer focus:bg-[#5865F2] focus:text-white">
                   <div className="flex items-center gap-2 text-[#B5BAC1] hover:text-white">
                     <div
-                      className={`w-3 h-3 rounded-full ${
-                        status === "online"
-                          ? "bg-[#23A559]"
-                          : status === "idle"
+                      className={`w-3 h-3 rounded-full ${status === "online"
+                        ? "bg-[#23A559]"
+                        : status === "idle"
                           ? "bg-[#F0B232]"
                           : status === "dnd"
-                          ? "bg-[#F23F43]"
-                          : "bg-[#80848E]"
-                      }`}
+                            ? "bg-[#F23F43]"
+                            : "bg-[#80848E]"
+                        }`}
                     />
                     <span>
                       {status === "online"
                         ? "Çevrimiçi"
                         : status === "idle"
-                        ? "Boşta"
-                        : status === "dnd"
-                        ? "Rahatsız Etmeyin"
-                        : status === "invisible"
-                        ? "Görünmez"
-                        : "Çevrimiçi"}
+                          ? "Boşta"
+                          : status === "dnd"
+                            ? "Rahatsız Etmeyin"
+                            : status === "invisible"
+                              ? "Görünmez"
+                              : "Çevrimiçi"}
                     </span>
                   </div>
                 </DropdownMenuSubTrigger>
