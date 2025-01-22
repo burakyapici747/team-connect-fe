@@ -9,3 +9,10 @@ export interface UserPublicOutput {
   email: string;
   username: string;
 }
+
+export interface Author {
+  id: string;
+  username: string;
+  avatarFileId: string;
+  avatarFileUrl: string;
+}
