@@ -249,7 +249,6 @@ export function DMChannelSidebar() {
 
   const handleCreateDM = async () => {
     // TODO: API call to create DM
-    console.log("Creating DM with users:", selectedUsers);
     setIsCreateDMOpen(false);
     setSelectedUsers([]);
     setSearchQuery("");
@@ -257,8 +256,6 @@ export function DMChannelSidebar() {
 
   useEffect(() => {
     // UserStore verilerini kontrol et
-    console.log("UserStore - User:", user);
-    console.log("UserStore - UserProfile:", userProfile);
   }, [user, userProfile]);
 
   useEffect(() => {
@@ -268,11 +265,9 @@ export function DMChannelSidebar() {
         if (Array.isArray(response)) {
           setDMChannels(response);
         } else {
-          console.error("API response is not an array:", response);
           setDMChannels([]);
         }
       } catch (error) {
-        console.log(error);
         setDMChannels([]);
       }
     })();

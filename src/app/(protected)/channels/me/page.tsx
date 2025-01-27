@@ -209,7 +209,6 @@ export default function FriendsPage() {
           setRelationships([]);
         }
       } catch (error) {
-        console.log(error);
         setRelationships([]);
       }
     })();
@@ -226,7 +225,6 @@ export default function FriendsPage() {
           setIncomingRelationships([]);
         }
       } catch (error) {
-        console.log(error);
         setIncomingRelationships([]);
       }
     })();
@@ -243,7 +241,6 @@ export default function FriendsPage() {
           setOutgoingRelationships([]);
         }
       } catch (error) {
-        console.log(error);
         setOutgoingRelationships([]);
       }
     })();

@@ -27,6 +27,8 @@ export default function DirectMessagePage({
   const { messages = [], setMessages } = useMessageStore();
   // TODO: Bu değeri API'den alınacak kanal bilgisine göre belirle
   const [isGroupChat, setIsGroupChat] = useState(false);
+  const [messageInput, setMessageInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -46,6 +48,34 @@ export default function DirectMessagePage({
       }
     })();
   }, []);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!messageInput.trim() || isSending) return;
+
+    try {
+      setIsSending(true);
+      await messageAPI.sendMessage(params.channelId, {
+        content: messageInput.trim(),
+      });
+
+      // Mesaj başarıyla gönderildikten sonra input'u temizle
+      setMessageInput("");
+
+      // Mesajları yeniden yükle
+      const response = await messageAPI.getMessagesByChannelId(
+        params.channelId
+      );
+      if (Array.isArray(response)) {
+        setMessages(response);
+      }
+    } catch (error) {
+      console.error("Mesaj gönderilirken hata oluştu:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const isFirstMessageInGroup = (index: number) => {
     if (index === 0) return true;
@@ -212,51 +242,59 @@ export default function DirectMessagePage({
 
         {/* Message Input */}
         <div className="px-4 pb-6">
-          <div
-            className="flex items-center gap-2 p-2 rounded-lg relative"
-            style={{ background: "var(--discord-input-bg)" }}
-          >
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:text-white transition-colors duration-200"
-              style={{ color: "var(--discord-text-muted)" }}
+          <form onSubmit={handleSendMessage}>
+            <div
+              className="flex items-center gap-2 p-2 rounded-lg relative"
+              style={{ background: "var(--discord-input-bg)" }}
             >
-              <PlusCircle className="h-5 w-5" />
-            </Button>
-            <input
-              type="text"
-              placeholder="Bir mesaj yazın"
-              className="flex-1 bg-transparent focus:outline-none text-[0.875rem] leading-[1.25rem] placeholder-shown:text-ellipsis placeholder:text-[--discord-text-muted]"
-              style={{ color: "var(--discord-text)" }}
-            />
-            <div className="flex items-center gap-2">
               <Button
+                type="button"
                 variant="ghost"
                 size="icon"
                 className="hover:text-white transition-colors duration-200"
                 style={{ color: "var(--discord-text-muted)" }}
               >
-                <GiftIcon className="h-5 w-5" />
+                <PlusCircle className="h-5 w-5" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:text-white transition-colors duration-200"
-                style={{ color: "var(--discord-text-muted)" }}
-              >
-                <Paperclip className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:text-white transition-colors duration-200"
-                style={{ color: "var(--discord-text-muted)" }}
-              >
-                <Smile className="h-5 w-5" />
-              </Button>
+              <input
+                type="text"
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                placeholder="Bir mesaj yazın"
+                className="flex-1 bg-transparent focus:outline-none text-[0.875rem] leading-[1.25rem] placeholder-shown:text-ellipsis placeholder:text-[--discord-text-muted]"
+                style={{ color: "var(--discord-text)" }}
+              />
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="hover:text-white transition-colors duration-200"
+                  style={{ color: "var(--discord-text-muted)" }}
+                >
+                  <GiftIcon className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="hover:text-white transition-colors duration-200"
+                  style={{ color: "var(--discord-text-muted)" }}
+                >
+                  <Paperclip className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="hover:text-white transition-colors duration-200"
+                  style={{ color: "var(--discord-text-muted)" }}
+                >
+                  <Smile className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {/* Sidebar */}
