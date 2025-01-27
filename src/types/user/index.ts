@@ -1,7 +1,10 @@
 export interface UserPrivateOutput {
   id: string;
-  email: string;
   username: string;
+  email: string;
+  token: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface UserPublicOutput {
@@ -15,4 +18,12 @@ export interface Author {
   username: string;
   avatarFileId: string;
   avatarFileUrl: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
 }
