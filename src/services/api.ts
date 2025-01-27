@@ -1,7 +1,7 @@
 import { AuthResponse } from "@/types/authentication";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://192.168.3.50:8080/v1/api";
 
 export class APIError extends Error {
   constructor(public status: number, message: string) {
@@ -66,7 +66,6 @@ export const authAPI = {
       body: JSON.stringify({ email, password }),
       credentials: "include",
     });
-
     if (!response.ok) {
       throw new APIError(response.status, await response.text());
     }

@@ -24,20 +24,17 @@ export const useCurrentUser = () => {
 
   React.useEffect(() => {
     if (userQuery.data) {
-      console.log("Setting user data:", userQuery.data);
       setUser(userQuery.data);
     }
   }, [userQuery.data, setUser]);
 
   React.useEffect(() => {
     if (profileQuery.data) {
-      console.log("Setting profile data:", profileQuery.data);
       setUserProfile(profileQuery.data);
     }
   }, [profileQuery.data, setUserProfile]);
 
   const fetchUserData = async () => {
-    console.log("Fetching user data...");
     try {
       const [userData, profileData] = await Promise.all([
         userQuery.refetch(),
@@ -45,11 +42,9 @@ export const useCurrentUser = () => {
       ]);
 
       if (userData.data) {
-        console.log("Fetched user data:", userData.data);
         setUser(userData.data);
       }
       if (profileData.data) {
-        console.log("Fetched profile data:", profileData.data);
         setUserProfile(profileData.data);
       }
       return { userData, profileData };

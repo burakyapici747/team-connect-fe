@@ -28,7 +28,7 @@ export const teamAPI = {
 
     const response = await fetch(
       `${
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+        process.env.NEXT_PUBLIC_API_URL || "http://192.168.3.50:8080"
       }/v1/api/teams`,
       {
         method: "POST",
