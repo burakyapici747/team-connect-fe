@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { messageAPI } from "@/services/api/message";
@@ -18,36 +18,121 @@ import {
 } from "lucide-react";
 import { UserSidebar } from "@/components/channel/user-sidebar";
 import { GroupSidebar } from "@/components/channel/group-sidebar";
+import { useWebSocket } from "@/hooks/use-websocket";
+import { Message } from "@/types/message";
+
+const MESSAGE_LIMIT = 50;
 
 export default function DirectMessagePage({
   params,
 }: {
   params: { channelId: string };
 }) {
-  const { messages = [], setMessages } = useMessageStore();
-  // TODO: Bu değeri API'den alınacak kanal bilgisine göre belirle
+  const {
+    messages = [],
+    setMessages,
+    prependMessages,
+    addMessage,
+    hasMore,
+    setHasMore,
+    isLoading,
+    setIsLoading,
+    clear,
+  } = useMessageStore();
+
   const [isGroupChat, setIsGroupChat] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const isInitialLoad = useRef(true);
+  const shouldScrollToBottom = useRef(true);
+
+  const scrollToBottom = () => {
+    if (scrollAreaRef.current) {
+      const { scrollHeight, clientHeight, scrollTop } = scrollAreaRef.current;
+      const isCloseToBottom = scrollHeight - scrollTop - clientHeight < 100;
+
+      if (shouldScrollToBottom.current || isCloseToBottom) {
+        scrollAreaRef.current.scrollTop = scrollHeight;
+      }
+    }
+  };
+
+  // WebSocket bağlantısı
+  const { connected } = useWebSocket({
+    channelId: params.channelId,
+    onMessageReceived: (message: Message) => {
+      addMessage(message);
+      // Mesaj eklendikten sonra DOM'un güncellenmesi için bir sonraki frame'i bekleyelim
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    },
+  });
+
+  const loadMessages = async (before?: string) => {
+    if (isLoading) return;
+
+    try {
+      setIsLoading(true);
+      const response = await messageAPI.getMessagesByChannelId(
+        params.channelId,
+        {
+          before,
+          limit: MESSAGE_LIMIT,
+        }
+      );
+
+      if (Array.isArray(response)) {
+        if (before) {
+          prependMessages(response);
+        } else {
+          setMessages(response);
+        }
+        setHasMore(response.length === MESSAGE_LIMIT);
+      } else {
+        console.log("API response is not an array:", response);
+        setMessages([]);
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setMessages([]);
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await messageAPI.getMessagesByChannelId(
-          params.channelId
-        );
-        if (Array.isArray(response)) {
-          setMessages(response);
-        } else {
-          console.log("API response is not an array:", response);
-          setMessages([]);
-        }
-      } catch (error) {
-        console.log(error);
-        setMessages([]);
+    loadMessages();
+    return () => {
+      clear();
+    };
+  }, [params.channelId]);
+
+  useEffect(() => {
+    if (messages.length > 0 && isInitialLoad.current) {
+      scrollToBottom();
+      isInitialLoad.current = false;
+    }
+  }, [messages]);
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLDivElement;
+    const { scrollHeight, clientHeight, scrollTop } = target;
+
+    // Kullanıcı yukarı kaydırdığında otomatik scroll'u devre dışı bırak
+    shouldScrollToBottom.current =
+      scrollHeight - scrollTop - clientHeight < 100;
+
+    if (scrollTop === 0 && hasMore && !isLoading) {
+      const oldestMessage = messages[0];
+      if (oldestMessage) {
+        loadMessages(oldestMessage.id);
       }
-    })();
-  }, []);
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,17 +144,8 @@ export default function DirectMessagePage({
       await messageAPI.sendMessage(params.channelId, {
         content: messageInput.trim(),
       });
-
-      // Mesaj başarıyla gönderildikten sonra input'u temizle
       setMessageInput("");
-
-      // Mesajları yeniden yükle
-      const response = await messageAPI.getMessagesByChannelId(
-        params.channelId
-      );
-      if (Array.isArray(response)) {
-        setMessages(response);
-      }
+      setTimeout(scrollToBottom, 100); // Mesaj gönderildikten sonra scroll
     } catch (error) {
       console.error("Mesaj gönderilirken hata oluştu:", error);
     } finally {
@@ -130,8 +206,22 @@ export default function DirectMessagePage({
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 px-4">
+        <div
+          ref={scrollAreaRef}
+          onScroll={handleScroll}
+          className="flex-1 px-4 overflow-y-auto"
+          style={{
+            scrollBehavior: "smooth",
+          }}
+        >
           <div className="py-4">
+            {isLoading && hasMore && (
+              <div className="flex justify-center py-4">
+                <span className="text-sm text-gray-400">
+                  Mesajlar yükleniyor...
+                </span>
+              </div>
+            )}
             {messages.map((message, index) => {
               const isFirst = isFirstMessageInGroup(index);
               const showFullHeader = isFirst;
@@ -238,7 +328,7 @@ export default function DirectMessagePage({
               );
             })}
           </div>
-        </ScrollArea>
+        </div>
 
         {/* Message Input */}
         <div className="px-4 pb-6">
