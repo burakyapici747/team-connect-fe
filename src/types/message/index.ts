@@ -2,16 +2,20 @@ import { Author } from "@/types/user";
 
 export interface Message {
   id: string;
-  channelId: string;
   content: string;
   timestamp: string;
-  editedTimestamp?: string;
-  pinned: boolean;
-  type?: number;
-  attachments?: Attachment[];
-  mentions?: Mention[];
-  reactions?: Map<string, number>[];
-  author: Author;
+  author: {
+    id: string;
+    username: string;
+  };
+  channelId: string;
+}
+
+export interface WebSocketMessage {
+  type: "MESSAGE" | "TYPING" | "READ";
+  payload: Message;
+  channelId: string;
+  timestamp: string;
 }
 
 interface Attachment {
