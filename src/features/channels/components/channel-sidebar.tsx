@@ -5,9 +5,9 @@ import {useParams, useRouter} from "next/navigation"
 import {ChevronDown, Hash, Plus, Settings, Volume2} from "lucide-react"
 
 import {cn} from "@/shared/utils/utils"
-import {Button} from "@/components/ui/button"
-import {ScrollArea} from "@/components/ui/scroll-area"
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible"
+import {Button} from "@/shared/components/ui/button"
+import {ScrollArea} from "@/shared/components/ui/scroll-area"
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/shared/components/ui/collapsible"
 
 export function ChannelSidebar() {
 

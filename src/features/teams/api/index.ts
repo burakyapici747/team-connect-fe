@@ -4,7 +4,7 @@ import {
   TeamCreateOutput,
   ResponseWrapper,
 } from "@/core/types/team";
-import { fetchAPI } from "../api";
+import { fetchAPI } from "@/shared/api";
 
 export const teamAPI = {
   getTeams: async (): Promise<Team[]> => {

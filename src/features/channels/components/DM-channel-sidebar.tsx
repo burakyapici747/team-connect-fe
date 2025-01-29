@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { useDMChannelStore } from "@/store/features/channel-store";
-import { channelAPI } from "@/services/api/channel";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
+import { Button } from "@/shared/components/ui/button";
+import { useDMChannelStore } from "@/features/channels/store/channel-store";
+import { channelAPI } from "@/features/channels/api";
 import { DMChannel } from "@/core/types/channel";
 import { UserPlus, MoreVertical, User, Plus, Search } from "lucide-react";
 import {
@@ -17,15 +17,15 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
   DropdownMenuPortal,
-} from "@/components/ui/dropdown-menu";
-import { useUserStore } from "@/store/features/user-store";
+} from "@/shared/components/ui/dropdown-menu";
+import { useUserStore } from "@/features/users/store/user-store";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/shared/components/ui/dialog";
+import { Checkbox } from "@/shared/components/ui/checkbox";
 
 const ProfileSection = () => {
   const [status, setStatus] = useState("online");
