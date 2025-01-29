@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/features/auth-store";
-import { authAPI } from "@/services/api";
-import { DMChannelSidebar } from "@/components/channel/DM-channel-sidebar";
-import { TeamSidebar } from "@/components/team/team-sidebar";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { useAuthStore } from "@/features/auth/store/auth-store";
+import { authAPI } from "@/shared/api";
+import { DMChannelSidebar } from "@/features/channels/components/DM-channel-sidebar";
+import { TeamSidebar } from "@/features/teams/components/team-sidebar";
+import { useCurrentUser } from "@/shared/hooks/use-current-user";
 
 export default function ChannelsLayout({
   children,

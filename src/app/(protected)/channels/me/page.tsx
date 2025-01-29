@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/shared/components/ui/button";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { MessageSquare, MoreVertical, X, Search, Check } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/shared/components/ui/input";
 import { useEffect, useState } from "react";
-import { useFriendStore } from "@/store/features/friend-store";
-import { friendAPI } from "@/services/api/friend";
-import { User } from "@/types";
-import { RelationshipsOutput } from "@/types/friend";
+import { useFriendStore } from "@/features/friends/store/friend-store";
+import { friendAPI } from "@/features/friends/api";
+import { User } from "../../../../core/types";
+import { RelationshipsOutput } from "@/core/types/friend";
 
 const blockedUsers = [
   {

@@ -1,4 +1,4 @@
-import { Author } from "@/types/user";
+import { Author } from "@/core/types/user";
 
 export interface Message {
   id: string;
