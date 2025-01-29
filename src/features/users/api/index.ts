@@ -1,15 +1,15 @@
-import { api } from "@/services/api";
+import { index } from "@/shared/api";
 import { UserPrivateOutput } from "@/core/types/user";
 import { UserProfilePrivateOutput } from "@/core/types/user-profile";
 
 export const userAPI = {
   getCurrentUser: async (): Promise<UserPrivateOutput> => {
-    const { data } = await api.get<UserPrivateOutput>("/users/me");
+    const { data } = await index.get<UserPrivateOutput>("/users/me");
     return data;
   },
 
   getCurrentUserProfile: async (): Promise<UserProfilePrivateOutput> => {
-    const { data } = await api.get<UserProfilePrivateOutput>(
+    const { data } = await index.get<UserProfilePrivateOutput>(
       "/users/me/profile"
     );
     return data;
@@ -18,7 +18,7 @@ export const userAPI = {
   updateProfile: async (
     data: Partial<UserProfilePrivateOutput>
   ): Promise<UserProfilePrivateOutput> => {
-    const response = await api.patch<UserProfilePrivateOutput>(
+    const response = await index.patch<UserProfilePrivateOutput>(
       "/users/me/profile",
       data
     );
@@ -28,7 +28,7 @@ export const userAPI = {
   updateUser: async (
     data: Partial<UserPrivateOutput>
   ): Promise<UserPrivateOutput> => {
-    const response = await api.patch<UserPrivateOutput>("/users/me", data);
+    const response = await index.patch<UserPrivateOutput>("/users/me", data);
     return response.data;
   },
 };

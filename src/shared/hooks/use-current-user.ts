@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { userAPI } from "@/services/api/user";
-import { useUserStore } from "@/store/features/user-store";
-import { UserPrivateOutput } from "@/types/user";
-import { UserProfilePrivateOutput } from "@/types/user-profile";
+import { userAPI } from "@/features/users/api";
+import { useUserStore } from "@/features/users/store/user-store";
+import { UserPrivateOutput } from "@/core/types/user";
+import { UserProfilePrivateOutput } from "@/core/types/user-profile";
 import React from "react";
 
 export const useCurrentUser = () => {

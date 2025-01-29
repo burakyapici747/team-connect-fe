@@ -34,7 +34,7 @@ export async function fetchAPI<T>(
   return response.json();
 }
 
-export const api = {
+export const index = {
   get: <T>(endpoint: string) =>
     fetchAPI<{ data: T }>(endpoint, { method: "GET" }),
   post: <T>(endpoint: string, data?: any) =>
@@ -89,6 +89,6 @@ export const authAPI = {
   },
 
   me: async (): Promise<{ data: AuthResponse }> => {
-    return api.get<AuthResponse>("/users/me");
+    return index.get<AuthResponse>("/users/me");
   },
 };

@@ -6,17 +6,17 @@ import Image from "next/image";
 import { Plus, Settings, Users } from "lucide-react";
 
 import { cn } from "@/shared/utils/utils";
-import { useTeamStore } from "@/store/features/team-store";
-import { teamAPI } from "@/services/api/team";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { CreateTeamModal } from "@/components/modals/create-team-modal";
+import { useTeamStore } from "@/features/teams/store/team-store";
+import { teamAPI } from "@/features/teams/api";
+import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
+import { CreateTeamModal } from "@/features/teams/modal/create-team-modal";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/shared/components/ui/tooltip";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.3.50:8080";
 

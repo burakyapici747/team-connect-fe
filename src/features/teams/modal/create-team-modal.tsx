@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/shared/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -18,13 +18,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
 import { ImagePlus } from "lucide-react";
 import { useState } from "react";
-import { teamAPI } from "@/services/api/team";
-import { useTeamStore } from "@/store/features/team-store";
+import { teamAPI } from "@/features/teams/api";
+import { useTeamStore } from "@/features/teams/store/team-store";
 import { toast } from "sonner";
 
 const formSchema = z.object({
