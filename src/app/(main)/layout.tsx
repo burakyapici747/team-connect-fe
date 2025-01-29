@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { TeamSidebar } from "@/components/team/team-sidebar";
-import { ChannelSidebar } from "@/components/channel/channel-sidebar";
+import { TeamSidebar } from "@/features/teams/components/team-sidebar";
+import { ChannelSidebar } from "@/features/channels/components/channel-sidebar";
 
 export default function MainLayout({ children, }: {
     children: React.ReactNode;

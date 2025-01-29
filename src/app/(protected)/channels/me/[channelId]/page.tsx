@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { messageAPI } from "@/services/api/message";
-import { useMessageStore } from "@/store/features/message-store";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
+import { Button } from "@/shared/components/ui/button";
+import { messageAPI } from "@/features/messages/api";
+import { useMessageStore } from "@/features/messages/store/message-store";
 import {
   PlusCircle,
   Smile,
@@ -16,10 +16,10 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { UserSidebar } from "@/components/channel/user-sidebar";
-import { GroupSidebar } from "@/components/channel/group-sidebar";
-import { useWebSocket } from "@/hooks/use-websocket";
-import { Message } from "@/types/message";
+import { UserSidebar } from "@/features/channels/components/user-sidebar";
+import { GroupSidebar } from "@/features/channels/components/group-sidebar";
+import { useWebSocket } from "@/shared/hooks/use-websocket";
+import { Message } from "@/core/types/message";
 
 const MESSAGE_LIMIT = 50;
 

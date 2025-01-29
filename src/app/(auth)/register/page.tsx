@@ -6,16 +6,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,11 +23,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/shared/components/ui/form";
 
-import { registerSchema } from "@/lib/validations/auth";
-import { authAPI } from "@/services/api";
-import { useAuthStore } from "@/store";
+import { registerSchema } from "@/features/auth/validations/auth";
+import { authAPI } from "@/shared/api";
+import { useAuthStore } from "@/shared/store";
 
 type RegisterForm = z.infer<typeof registerSchema>;
 

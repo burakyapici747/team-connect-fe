@@ -6,15 +6,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/components/ui/card";
 import {
   Form,
   FormControl,
@@ -22,12 +22,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/shared/components/ui/form";
 
-import { loginSchema } from "@/lib/validations/auth";
-import { authAPI } from "@/services/api";
-import { useAuthStore } from "@/store";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { loginSchema } from "@/features/auth/validations/auth";
+import { authAPI } from "@/shared/api";
+import { useAuthStore } from "@/shared/store";
+import { useCurrentUser } from "@/shared/hooks/use-current-user";
 
 type LoginForm = z.infer<typeof loginSchema>;
 
