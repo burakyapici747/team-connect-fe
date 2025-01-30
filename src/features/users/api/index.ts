@@ -1,4 +1,4 @@
-import { index } from "@/shared/api";
+import { index } from "@/shared/api/genericAPI";
 import { UserPrivateOutput } from "@/core/types/user";
 import { UserProfilePrivateOutput } from "@/core/types/user-profile";
 

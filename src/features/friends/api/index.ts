@@ -1,5 +1,5 @@
 import {RelationshipsOutput} from "@/core/types/friend";
-import {fetchAPI} from "../../../shared/api";
+import {fetchAPI} from "../../../shared/api/genericAPI";
 
 export const friendAPI = {
     getRelationships: async () => {
