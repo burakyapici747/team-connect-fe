@@ -1,5 +1,5 @@
 import { Message } from "@/core/types/message";
-import { fetchAPI } from "../../../shared/api";
+import { fetchAPI } from "../../../shared/api/genericAPI";
 
 interface MessageCreateInput {
   content: string;

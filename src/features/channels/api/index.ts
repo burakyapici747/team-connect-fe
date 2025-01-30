@@ -1,5 +1,5 @@
 import {DMChannel} from "@/core/types/channel";
-import {fetchAPI} from "../../../shared/api";
+import {fetchAPI} from "../../../shared/api/genericAPI";
 
 export const channelAPI = {
     getDMChannels: async (): Promise<DMChannel[]> => {
