@@ -1,6 +1,11 @@
 export const API_ENDPOINTS = {
-    AUTH: {},
-    USERS: {},
+    AUTH: {
+        login: '/auth',
+    },
+    USERS: {
+        register: '/users',
+        me: '/users/me'
+    },
     MESSAGES: {},
     TEAMS: {},
     DM_CHANNELS: {},

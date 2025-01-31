@@ -24,7 +24,9 @@ const axiosInstance = (): AxiosInstance => {
     return instance;
 };
 
-const createFullURLForRequestParameter = (requestParameters: { [key: string]: string | number | boolean }): string => {
+const createFullURLForRequestParameter = (
+    requestParameters: { [key: string]: string | number | boolean }
+): string => {
     if (!requestParameters || Object.keys(requestParameters).length === 0) return '';
 
     const queryString = Object.entries(requestParameters)
@@ -34,16 +36,23 @@ const createFullURLForRequestParameter = (requestParameters: { [key: string]: st
     return `?${queryString}`;
 };
 
-const createFullURLForPathVariable = (pathTemplate: string, pathParams: { [key: string]: string | number | boolean }): string => {
+const createFullURLForPathVariable = (
+    pathTemplate: string,
+    pathVariables: { [key: string]: string | number | boolean }
+): string => {
     return pathTemplate.replace(/{(\w+)}/g, (_, key) => {
-        if (pathParams[key] === undefined) {
+        if (pathVariables[key] === undefined) {
             throw new Error(`Missing value for path variable: ${key}`);
         }
-        return encodeURIComponent(pathParams[key]);
+        return encodeURIComponent(pathVariables[key]);
     });
 };
 
-export const getWithRequestParameter = async (url: string, requestParameters: { [key: string]: string | boolean | number }, config: AxiosRequestConfig = {}): Promise<AxiosResponse> => {
+export const getWithRequestParameter = async (
+    url: string,
+    requestParameters: { [key: string]: string | boolean | number },
+    config: AxiosRequestConfig = {}
+): Promise<AxiosResponse> => {
     const fullURL: string = url + createFullURLForRequestParameter(requestParameters);
 
     if (Object.keys(config).length === 0) {
@@ -53,12 +62,48 @@ export const getWithRequestParameter = async (url: string, requestParameters: { 
     }
 };
 
-export const getWithPathVariable = async (url: string, pathVariables: {[key:string]: string | number | boolean}, config: AxiosRequestConfig): Promise<AxiosResponse> => {
-    const fullURL :string = url + createFullURLForPathVariable(url, pathVariables);
+export const getWithPathVariable = async (
+    url: string,
+    pathTemplate: string,
+    pathVariables: {[key:string]: string | number | boolean},
+    config: AxiosRequestConfig = {}
+): Promise<AxiosResponse> => {
+    const fullURL :string = url + createFullURLForPathVariable(pathTemplate, pathVariables);
 
     if (Object.keys(config).length === 0) {
         return axiosInstance().get(fullURL);
     }else{
         return axiosInstance().get(fullURL, config);
+    }
+};
+
+export const postWithRequestParameter = async <T extends object>(
+    url: string,
+    requestParameters: {[key:string]: string | number | boolean},
+    requestBody: T,
+    config: AxiosRequestConfig = {}
+): Promise<AxiosResponse> => {
+    const fullURL: string = url + createFullURLForRequestParameter(requestParameters);
+
+    if(Object.keys(config).length === 0){
+        return axiosInstance().post(fullURL, requestBody);
+    }else{
+        return axiosInstance().post(fullURL, requestBody, config);
+    }
+}
+
+export const postWithPathVariable = async <T extends object>(
+    url: string,
+    pathTemplate: string,
+    pathVariables: {[key:string]: string | number | boolean},
+    requestBody: T,
+    config: AxiosRequestConfig = {}
+): Promise<AxiosResponse> => {
+    const fullURL:string = url + createFullURLForPathVariable(pathTemplate, pathVariables);
+
+    if(Object.keys(config).length === 0){
+        return axiosInstance().post(fullURL, requestBody);
+    }else{
+        return axiosInstance().post(fullURL, requestBody, config);
     }
 };
