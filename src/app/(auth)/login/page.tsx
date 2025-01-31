@@ -6,7 +6,6 @@ import { useState } from "react";
 import { AuthCard } from "@/features/auth/components/auth-card";
 import { AuthForm } from "@/features/auth/components/forms/auth-form";
 import { LoginFormData } from "@/features/auth/types";
-import { authAPI } from "@/features/auth/api";
 import { useCurrentUser } from "@/shared/hooks/use-current-user";
 
 export default function LoginPage() {
