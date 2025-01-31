@@ -1,9 +1,9 @@
-import axios, {AxiosResponse} from "axios";
-import {ApiResponse, ErrorType} from "@/shared/api/response/response";
-import {getWithRequestParameter} from "@/core/config/axios/instance";
+import axios, { AxiosResponse } from "axios";
+import { ApiResponse, ErrorType } from "@/shared/api/response/response";
+import { getWithRequestParameter } from "@/core/config/axios/instance";
 
 const requestHandler = async <T>(axiosResponse: Promise<AxiosResponse>): Promise<ApiResponse<T>> => {
-    try{
+    try {
         const response = await axiosResponse;
         const data: T = await response.data;
 
@@ -12,8 +12,8 @@ const requestHandler = async <T>(axiosResponse: Promise<AxiosResponse>): Promise
             isSuccess: true,
             data: data
         }
-    }catch (error){
-        if(axios.isAxiosError(error)){
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
             return {
                 message: error.message,
                 isSuccess: false,
@@ -29,6 +29,17 @@ const requestHandler = async <T>(axiosResponse: Promise<AxiosResponse>): Promise
     }
 };
 
-const getAllWithRequestParameter = async <T extends object>(url: string, requestParameters: {[key: string]: string | number | boolean}): Promise<ApiResponse<Array<T>>> => {
+export const getAllWithRequestParameter = async <T extends object>(
+    url: string,
+    requestParameters: { [key: string]: string | number | boolean }
+): Promise<ApiResponse<Array<T>>> => {
     return requestHandler<Array<T>>(getWithRequestParameter(url, requestParameters));
 };
+
+export const getSingleWithRequestParameter = async <T extends object>(
+    url: string,
+    requestParameters: { [key: string]: string | number | boolean }
+): Promise<ApiResponse<T>> => {
+    return requestHandler<T>(getWithRequestParameter(url, requestParameters));
+};
+
