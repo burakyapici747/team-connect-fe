@@ -1,6 +1,7 @@
-import axios, { AxiosResponse } from "axios";
+import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import { ApiResponse, ErrorType } from "@/shared/api/response/response";
-import { getWithRequestParameter } from "@/core/config/axios/instance";
+import {getWithRequestParameter, postWithRequestParameter} from "@/core/config/axios/instance";
+import {LoginInput} from "@/features/auth/types";
 
 const requestHandler = async <T>(axiosResponse: Promise<AxiosResponse>): Promise<ApiResponse<T>> => {
     try {
@@ -38,8 +39,16 @@ export const getAllWithRequestParameter = async <T extends object>(
 
 export const getSingleWithRequestParameter = async <T extends object>(
     url: string,
-    requestParameters: { [key: string]: string | number | boolean }
+    requestParameters: { [key: string]: string | number | boolean },
+    config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<T>> => {
-    return requestHandler<T>(getWithRequestParameter(url, requestParameters));
+    return requestHandler<T>(getWithRequestParameter(url, requestParameters, config));
 };
 
+export const postSingleRequestParameter = async<T extends object>(
+    url:string,
+    requestBody: LoginInput,
+    requestParameters: {[key:string]: string | number | boolean}
+): Promise<ApiResponse<T>> =>{
+    return await requestHandler<T>(postWithRequestParameter(url, requestParameters, requestBody))
+};
