@@ -1,10 +1,10 @@
 export const API_ENDPOINTS = {
     AUTH: {
-        login: '/auth',
+        LOGIN: '/auth',
     },
     USERS: {
-        register: '/users',
-        me: '/users/me'
+        REGISTER: '/users',
+        ME: '/users/me'
     },
     MESSAGES: {},
     TEAMS: {},
