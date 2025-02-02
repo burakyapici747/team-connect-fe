@@ -5,13 +5,13 @@ export const useFetch = <T>(
     fetchFunction: (...args: any[]) => Promise<ApiResponse<T>>,
     ...params: any[]
 ) => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<ApiResponse<T> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = fetchFunction(params);
+        const response = await fetchFunction(...params);
         setData(response);
         setLoading(false);
       } catch (error) {
@@ -27,7 +27,7 @@ export const useFetch = <T>(
       console.log('Component unmounting');
     }
 
-  }, []);
+  }, [fetchFunction, params]);
 
-  return { data, loading };
+  return [data, loading];
 };

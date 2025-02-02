@@ -26,3 +26,8 @@ export interface RegisterAuthFormProps extends BaseAuthFormProps {
 }
 
 export type AuthFormProps = LoginAuthFormProps | RegisterAuthFormProps;
+
+export type LoginInput = {
+  email: string,
+  password: string,
+}
