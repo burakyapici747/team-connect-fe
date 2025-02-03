@@ -45,10 +45,11 @@ export const getSingleWithRequestParameter = async <T extends object>(
     return requestHandler<T>(getWithRequestParameter(url, requestParameters, config));
 };
 
-export const postSingleRequestParameter = async<T extends object>(
+export const postSingleRequestParameter = async <T extends object>(
     url:string,
-    requestBody: LoginInput,
-    requestParameters: {[key:string]: string | number | boolean}
-): Promise<ApiResponse<T>> =>{
-    return await requestHandler<T>(postWithRequestParameter(url, requestParameters, requestBody))
+    requestBody: T,
+    requestParameters: {[key:string]: string | number | boolean},
+    config: AxiosRequestConfig = {}
+): Promise<ApiResponse<T | T[]>> =>{
+    return await requestHandler<T | T[]>(postWithRequestParameter(url, requestParameters, requestBody, config));
 };
