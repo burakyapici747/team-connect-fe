@@ -6,7 +6,7 @@ enum ErrorType{
 interface SuccessResponse<T> {
     message: string;
     isSuccess: true;
-    data: T;
+    data: T | T[];
 }
 
 interface ErrorResponse {
