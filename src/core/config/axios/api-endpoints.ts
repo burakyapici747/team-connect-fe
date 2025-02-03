@@ -7,7 +7,10 @@ export const API_ENDPOINTS = {
         ME: '/users/me'
     },
     MESSAGES: {},
-    TEAMS: {},
+    TEAMS: {
+        CURRENT_USER_TEAMS: '/users/me/teams',
+        CREATE_TEAM: '/teams/'
+    },
     DM_CHANNELS: {},
     FRIENDSHIPS: {},
 } as const;
