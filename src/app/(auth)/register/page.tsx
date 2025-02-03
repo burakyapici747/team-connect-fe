@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { AuthCard } from "@/features/auth/components/auth-card";
 import { AuthForm } from "@/features/auth/components/forms/auth-form";
 import { RegisterFormData } from "@/features/auth/types";
-import { authAPI } from "@/shared/api/genericAPI";
 import { useAuthStore } from "@/features/auth/store/auth-store";
 import { useState } from "react";
 

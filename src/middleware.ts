@@ -3,8 +3,8 @@ import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("jwt")
-  const isAuthPage = request.nextUrl.pathname.startsWith("/login") || 
-                    request.nextUrl.pathname.startsWith("/register")
+  const isAuthPage = request.nextUrl.pathname.startsWith("/login")
+      || request.nextUrl.pathname.startsWith("/register")
 
   if (!token && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", request.url))
