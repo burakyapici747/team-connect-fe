@@ -7,7 +7,6 @@ import { Plus, Settings, Users } from "lucide-react";
 
 import { cn } from "@/shared/utils/utils";
 import { useTeamStore } from "@/features/teams/store/team-store";
-import { teamAPI } from "@/features/teams/api";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { CreateTeamModal } from "@/features/teams/modal/create-team-modal";
@@ -17,8 +16,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://192.168.3.50:8080";
 
 export function TeamSidebar() {
   const router = useRouter();

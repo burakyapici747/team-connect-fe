@@ -8,7 +8,6 @@ import { Input } from "@/shared/components/ui/input";
 import { useEffect, useState } from "react";
 import { useFriendStore } from "@/features/friends/store/friend-store";
 import { friendAPI } from "@/features/friends/api";
-import { User } from "../../../../core/types";
 import { RelationshipsOutput } from "@/core/types/friend";
 
 const blockedUsers = [
