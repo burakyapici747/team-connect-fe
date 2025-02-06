@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Plus, Settings, Users } from "lucide-react";
 
 import { cn } from "@/shared/utils/utils";
-import { useTeamStore } from "@/features/teams/store/team-store";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { CreateTeamModal } from "@/features/teams/modal/create-team-modal";
@@ -20,25 +19,7 @@ import {
 export function TeamSidebar() {
   const router = useRouter();
   const params = useParams();
-  const { teams = [], setTeams } = useTeamStore();
   const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await teamAPI.getTeams();
-        if (Array.isArray(response)) {
-          setTeams(response);
-        } else {
-          console.error("API response is not an array:", response);
-          setTeams([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch teams:", error);
-        setTeams([]);
-      }
-    })();
-  }, []);
 
   const navigateToDirectMessages = () => {
     router.push("/channels/me");
