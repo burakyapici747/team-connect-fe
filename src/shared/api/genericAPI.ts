@@ -33,14 +33,15 @@ const requestHandler = async <T>(
 
 export const getAllWithRequestParameter = async <T extends object>(
     url: string,
-    requestParameters: { [key: string]: string | number | boolean }
+    requestParameters: { [key: string]: string | number | boolean },
+    config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<Array<T>>> => {
-    return requestHandler<Array<T>>(getWithRequestParameter(url, requestParameters));
+    return requestHandler<Array<T>>(getWithRequestParameter(url, requestParameters, config));
 };
 
 export const getSingleWithRequestParameter = async <T extends object>(
     url: string,
-    requestParameters: { [key: string]: string | number | boolean },
+    requestParameters: { [key: string]: string | number | boolean } = {},
     config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<T>> => {
     return requestHandler<T>(getWithRequestParameter(url, requestParameters, config));

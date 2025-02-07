@@ -23,8 +23,6 @@ import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { ImagePlus } from "lucide-react";
 import { useState } from "react";
-import { teamAPI } from "@/features/teams/api";
-import { useTeamStore } from "@/features/teams/store/team-store";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -43,7 +41,6 @@ export const CreateTeamModal = ({ isOpen, onClose }: CreateTeamModalProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { teams, setTeams } = useTeamStore();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
