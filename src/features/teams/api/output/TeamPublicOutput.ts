@@ -5,4 +5,4 @@ export interface TeamPublicOutput {
     icon: string,
     createdAt: string,
     updatedAt: string
-};
+}
