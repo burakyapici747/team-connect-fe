@@ -24,12 +24,15 @@ import {
   DialogTitle,
 } from "@/shared/components/ui/dialog";
 import { Checkbox } from "@/shared/components/ui/checkbox";
+import {useProfile} from "@/features/profile/hooks/useProfile";
+import {useDMChannel} from "@/features/channels/hooks/UseDMChannel";
 
 /* --------------------------------------------------------------------------
    ProfileSection Component
 -------------------------------------------------------------------------- */
 const ProfileSection = () => {
   const [status, setStatus] = useState<"online" | "idle" | "dnd" | "invisible">("online");
+  const { currentUserProfile, isLoading, error } = useProfile();
 
   return (
       <div className="mt-auto p-2 bg-[#232428] flex items-center gap-2">
@@ -41,7 +44,7 @@ const ProfileSection = () => {
             >
               <div className="relative">
                 <img
-                    src={userProfile?.avatarFileUrl}
+                    src={currentUserProfile?.avatarFileUrl}
                     alt="Profile"
                     className="w-8 h-8 rounded-full"
                 />
@@ -59,10 +62,10 @@ const ProfileSection = () => {
               </div>
               <div className="flex flex-col items-start">
               <span className="text-[12px] font-medium text-[#DBDEE1]">
-                {user?.username}
+                {currentUserProfile?.fullName}
               </span>
                 <span className="text-[12px] text-[#949BA4]">
-                {userProfile?.fullName}
+                {currentUserProfile?.fullName}
               </span>
               </div>
             </Button>
@@ -84,7 +87,7 @@ const ProfileSection = () => {
                   <div className="absolute -top-[52px]">
                     <div className="w-[84px] h-[84px] rounded-full border-[6px] border-[#1E1F22] bg-[#1E1F22]">
                       <img
-                          src={userProfile?.avatarFileUrl}
+                          src={currentUserProfile?.avatarFileUrl}
                           alt="Profile"
                           className="w-full h-full rounded-full"
                       />
@@ -105,10 +108,10 @@ const ProfileSection = () => {
                   <div className="pt-[40px]">
                     <div className="rounded-lg">
                       <h2 className="text-xl font-semibold text-white mb-0.5">
-                        {user?.username}
+                        {currentUserProfile?.fullName}
                       </h2>
                       <p className="text-sm text-[#B5BAC1]">
-                        {userProfile?.fullName}
+                        {currentUserProfile?.fullName}
                       </p>
                     </div>
                   </div>
@@ -215,11 +218,10 @@ const ProfileSection = () => {
 -------------------------------------------------------------------------- */
 export function DMChannelSidebar() {
   const router = useRouter();
-  const { channels } = useDMChannelStore();
-  const { user, userProfile } = useUserStore();
   const [isCreateDMOpen, setIsCreateDMOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const { currentUserDMChannels, isLoading, error} = useDMChannel();
 
   // TODO: Gerçek API'den kullanıcı listesini çekin.
   const users: Array<{ id: string; username: string; displayName: string }> = [];
@@ -348,7 +350,7 @@ export function DMChannelSidebar() {
 
         {/* DM Kanallarının Listesi */}
         <ScrollArea className="flex-1 mt-2">
-          {channels.map((channel: DMChannel) => (
+          {currentUserDMChannels?.map((channel: DMChannel) => (
               <Button
                   key={channel.id}
                   variant="ghost"

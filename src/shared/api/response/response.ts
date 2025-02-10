@@ -17,10 +17,10 @@ interface ErrorResponse {
 
 type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-export{
+export {
     ErrorType
 }
 
-export type{
+export type {
     ApiResponse
 }
