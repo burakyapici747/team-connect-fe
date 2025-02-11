@@ -7,7 +7,8 @@ export const API_ENDPOINTS = {
         ME: '/users/me'
     },
     MESSAGES: {
-        DM_CHANNEL_MESSAGES: '/channels/{channelId}/messages'
+        DM_CHANNEL_MESSAGES: '/channels/{channelId}/messages',
+        SEND_MESSAGE: '/channels/{channelId}/messages',
     },
     TEAMS: {
         CURRENT_USER_TEAMS: '/users/me/teams',
