@@ -1,6 +1,6 @@
 import {ApiResponse} from "@/shared/api/response/response";
 import {MessageOutput} from "@/features/messages/api/output/MessageOutput";
-import {getAllWithPathVariable} from "@/shared/api/genericAPI";
+import {getAllWithPathVariable, postSingleWithPathVariable} from "@/shared/api/genericAPI";
 import {API_ENDPOINTS} from "@/core/config/axios/api-endpoints";
 
 export const getMessagesByChannelId: (channelId: string) => Promise<ApiResponse<MessageOutput[]>> = async (
@@ -13,3 +13,9 @@ export const getMessagesByChannelId: (channelId: string) => Promise<ApiResponse<
     );
 };
 
+export const sendMessage: <T extends object>(channelId: string, requestBody: T) => Promise<ApiResponse<void>> = async<T extends object>(
+    channelId: string,
+    requestBody: T
+): Promise<ApiResponse<void>> => {
+    return postSingleWithPathVariable<T, void>(API_ENDPOINTS.MESSAGES.SEND_MESSAGE, requestBody, "/{channelId}", { channelId });
+};

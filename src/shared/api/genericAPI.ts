@@ -1,6 +1,11 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import { ApiResponse, ErrorType } from "@/shared/api/response/response";
-import {getWithPathVariable, getWithRequestParameter, postWithRequestParameter} from "@/core/config/axios/instance";
+import {
+    getWithPathVariable,
+    getWithRequestParameter,
+    postWithPathVariable,
+    postWithRequestParameter
+} from "@/core/config/axios/instance";
 
 const requestHandler = async <T>(
     axiosResponse: Promise<AxiosResponse>
@@ -63,4 +68,14 @@ export const postSingleRequestParameter = async <TRequest extends object, TRespo
     config: AxiosRequestConfig = {}
 ): Promise<ApiResponse<TResponse>> =>{
     return await requestHandler<TResponse>(postWithRequestParameter(url, requestParameters, requestBody, config));
+};
+
+export const postSingleWithPathVariable = async <TRequest extends object, TResponse>(
+    url:string,
+    requestBody: TRequest,
+    pathTemplate: string,
+    pathVariable: {[key: string] : string | number | boolean} = {},
+    config: AxiosRequestConfig = {}
+): Promise<ApiResponse<TResponse>> =>{
+    return await requestHandler<TResponse>(postWithPathVariable(url, pathTemplate, pathVariable, requestBody, config));
 };
