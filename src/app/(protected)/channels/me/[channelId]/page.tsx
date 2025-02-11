@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/shared/components/ui/button";
-import { messageAPI } from "@/features/messages/api";
 import { useWebSocket } from "@/shared/hooks/use-websocket";
 import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "@/core/types/message";
-import { useMessages } from "@/features/messages/api/hooks/useMessages";
+import { useMessages } from "@/features/messages/hooks/useMessages";
 import { UserSidebar } from "@/features/channels/components/user-sidebar";
 import { GroupSidebar } from "@/features/channels/components/group-sidebar";
 import {
@@ -19,22 +18,22 @@ import {
   Edit2,
 } from "lucide-react";
 
-export default function DirectMessagePage({
-                                            params,
-                                          }: {
+export default function DirectMessagePage({params,}: {
   params: { channelId: string };
 }) {
-  // useMessages hook'u channelId'ye göre mesajları çekiyor.
-  const { messages, isLoading, error } = useMessages(params.channelId);
+  // useMessages hook'u verileri çekiyor ve mesaj gönderme işlevini sağlıyor.
+  const { messages, isLoading, error, sendMessage, isSending } = useMessages(
+      params.channelId
+  );
 
   const [isGroupChat, setIsGroupChat] = useState(false);
   const [messageInput, setMessageInput] = useState("");
-  const [isSending, setIsSending] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const isInitialLoad = useRef(true);
   const shouldScrollToBottom = useRef(true);
   const queryClient = useQueryClient();
 
+  // Scroll işlemini kontrol eden yardımcı fonksiyon
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
       const { scrollHeight, clientHeight, scrollTop } = scrollAreaRef.current;
@@ -45,21 +44,22 @@ export default function DirectMessagePage({
     }
   };
 
-  // WebSocket bağlantısı: Yeni mesaj geldiğinde query cache'ini güncelliyoruz.
+  // WebSocket ile gelen yeni mesajlarda query cache'ini güncelliyoruz
   const { connected } = useWebSocket({
     channelId: params.channelId,
     onMessageReceived: (message: Message) => {
-      queryClient.setQueryData(["messages", params.channelId], (oldData?: any) => {
+      queryClient.setQueryData(["messages", params.channelId], (oldData?: Message[]) => {
         if (!oldData) return [message];
         return [...oldData, message];
       });
+      // Yeni mesaj eklendiğinde scroll'ı güncelle
       requestAnimationFrame(() => {
         scrollToBottom();
       });
     },
   });
 
-  // İlk yüklemede veya mesajlar güncellendiğinde scroll to bottom
+  // Mesajlar ilk yüklendiğinde (veya değiştiğinde) scroll'ı altta tutmak için
   useEffect(() => {
     if (messages && messages.length > 0 && isInitialLoad.current) {
       scrollToBottom();
@@ -67,28 +67,30 @@ export default function DirectMessagePage({
     }
   }, [messages]);
 
+  // Kullanıcı scroll yaptığında, scroll konumunu güncelliyoruz
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const target = event.target as HTMLDivElement;
     const { scrollHeight, clientHeight, scrollTop } = target;
     shouldScrollToBottom.current = scrollHeight - scrollTop - clientHeight < 100;
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  // Mesaj gönderme işlemi: sendMessage mutation'ını callback seçenekleriyle kullanıyoruz.
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim() || isSending) return;
 
-    try {
-      setIsSending(true);
-      await messageAPI.sendMessage(params.channelId, {
-        content: messageInput.trim(),
-      });
-      setMessageInput("");
-      setTimeout(scrollToBottom, 100);
-    } catch (error) {
-      console.error("Mesaj gönderilirken hata oluştu:", error);
-    } finally {
-      setIsSending(false);
-    }
+    sendMessage(
+        { content: messageInput.trim() },
+        {
+          onSuccess: () => {
+            setMessageInput("");
+            setTimeout(scrollToBottom, 100);
+          },
+          onError: (error) => {
+            console.error("Mesaj gönderilirken hata oluştu:", error);
+          },
+        }
+    );
   };
 
   // Mesaj gruplarını belirlemek için yardımcı fonksiyon
@@ -106,11 +108,17 @@ export default function DirectMessagePage({
 
   return (
       <div className="flex h-full">
-        <div className="flex-1 flex flex-col" style={{ background: "var(--discord-bg)" }}>
+        <div
+            className="flex-1 flex flex-col"
+            style={{ background: "var(--discord-bg)" }}
+        >
           {/* Header */}
           <div
               className="flex items-center justify-between p-3 h-12 border-b"
-              style={{ borderColor: "var(--discord-tertiary-bg)", background: "var(--discord-bg)" }}
+              style={{
+                borderColor: "var(--discord-tertiary-bg)",
+                background: "var(--discord-bg)",
+              }}
           >
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -122,10 +130,16 @@ export default function DirectMessagePage({
                 </div>
                 <div
                     className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2"
-                    style={{ background: "var(--discord-online)", borderColor: "var(--discord-bg)" }}
+                    style={{
+                      background: "var(--discord-online)",
+                      borderColor: "var(--discord-bg)",
+                    }}
                 />
               </div>
-              <span className="font-semibold text-sm" style={{ color: "var(--discord-text)" }}>
+              <span
+                  className="font-semibold text-sm"
+                  style={{ color: "var(--discord-text)" }}
+              >
               {isGroupChat ? "Uçan Kuş" : "Kullanıcı Adı"}
             </span>
             </div>
@@ -141,12 +155,16 @@ export default function DirectMessagePage({
             <div className="py-4">
               {isLoading && (
                   <div className="flex justify-center py-4">
-                    <span className="text-sm text-gray-400">Mesajlar yükleniyor...</span>
+                <span className="text-sm text-gray-400">
+                  Mesajlar yükleniyor...
+                </span>
                   </div>
               )}
               {error && (
                   <div className="flex justify-center py-4">
-                    <span className="text-sm text-red-400">Mesajlar yüklenirken hata oluştu.</span>
+                <span className="text-sm text-red-400">
+                  Mesajlar yüklenirken hata oluştu.
+                </span>
                   </div>
               )}
               {messages &&
@@ -154,7 +172,8 @@ export default function DirectMessagePage({
                     const isFirst = isFirstMessageInGroup(index);
                     const showFullHeader = isFirst;
                     const isPartOfGroup =
-                        index > 0 && messages[index - 1].author.id === message.author.id;
+                        index > 0 &&
+                        messages[index - 1].author.id === message.author.id;
 
                     return (
                         <div
@@ -166,7 +185,10 @@ export default function DirectMessagePage({
                           {/* Grup içindeki mesajlarda hover ile zaman gösterimi */}
                           {isPartOfGroup && (
                               <div className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-100">
-                        <span className="text-xs" style={{ color: "var(--discord-text-muted)" }}>
+                        <span
+                            className="text-xs"
+                            style={{ color: "var(--discord-text-muted)" }}
+                        >
                           14:30
                         </span>
                               </div>
@@ -197,13 +219,16 @@ export default function DirectMessagePage({
                                       className="text-[0.6875rem]"
                                       style={{ color: "var(--discord-text-muted)" }}
                                   >
-                            {new Date(message.timestamp).toLocaleDateString("tr-TR", {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {new Date(message.timestamp).toLocaleDateString(
+                                "tr-TR",
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                            )}
                           </span>
                                 </div>
                             )}
@@ -305,6 +330,7 @@ export default function DirectMessagePage({
             </form>
           </div>
         </div>
+
         {/* Sidebar */}
         {isGroupChat ? <GroupSidebar /> : <UserSidebar />}
       </div>
