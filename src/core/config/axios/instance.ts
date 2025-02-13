@@ -70,7 +70,6 @@ export const getWithPathVariable = async (
     config: AxiosRequestConfig = {}
 ): Promise<AxiosResponse> => {
     const fullURL :string = url + createFullURLForPathVariable(pathTemplate, pathVariables);
-
     if (Object.keys(config).length === 0) {
         return axiosInstance().get(fullURL);
     }else{

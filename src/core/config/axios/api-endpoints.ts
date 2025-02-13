@@ -19,8 +19,8 @@ export const API_ENDPOINTS = {
     },
     FRIENDSHIPS: {
         CURRENT_USER_FRIENDSHIPS: '/users/me/relationships',
-        CURRENT_USER_OUTGOING_FRIENDSHIPS: '/users/me/friendships/outgoing-requests',
-        CURRENT_USER_INCOMING_FRIENDSHIPS: '/users/me/friendships/incoming-requests',
+        CURRENT_USER_OUTGOING_FRIENDSHIPS: '/users/me/relationships/outgoing-requests',
+        CURRENT_USER_INCOMING_FRIENDSHIPS: '/users/me/relationships/incoming-requests',
     },
     PROFILE: {
         CURRENT_USER_PROFILE: '/users/me/profile'
