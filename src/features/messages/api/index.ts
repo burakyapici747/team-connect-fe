@@ -8,7 +8,7 @@ export const getMessagesByChannelId: (channelId: string) => Promise<ApiResponse<
 ): Promise<ApiResponse<MessageOutput[]>> => {
     return getAllWithPathVariable<MessageOutput>(
         API_ENDPOINTS.MESSAGES.DM_CHANNEL_MESSAGES,
-        "/{channelId}",
+        "",
         { channelId }
     );
 };
@@ -17,5 +17,5 @@ export const sendMessage: <T extends object>(channelId: string, requestBody: T) 
     channelId: string,
     requestBody: T
 ): Promise<ApiResponse<void>> => {
-    return postSingleWithPathVariable<T, void>(API_ENDPOINTS.MESSAGES.SEND_MESSAGE, requestBody, "/{channelId}", { channelId });
+    return postSingleWithPathVariable<T, void>(API_ENDPOINTS.MESSAGES.SEND_MESSAGE, requestBody, "", { channelId });
 };
