@@ -14,7 +14,7 @@ class WebSocketService {
         resolve();
         return;
       }
-      const socket = new SockJS(`${this.baseUrl}/ws`, undefined, { withCredentials: true } as any);
+      const socket = new SockJS(`${this.baseUrl}/ws`);
 
 
 

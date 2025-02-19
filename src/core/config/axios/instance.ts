@@ -41,13 +41,13 @@ const createFullURLForPathVariable = (
     pathTemplate: string,
     pathVariables: { [key: string]: string | number | boolean }
 ): string => {
-    return pathTemplate.replace(/{(\w+)}/g, (_, key) => {
-        if (pathVariables[key] === undefined) {
-            throw new Error(`Missing value for path variable: ${key}`);
-        }
-        return encodeURIComponent(pathVariables[key]);
-    });
+    let path = pathTemplate;
+    for (const key in pathVariables) {
+        path = path.replace(`{${key}}`, encodeURIComponent(String(pathVariables[key])));
+    }
+    return path;
 };
+
 
 export const getWithRequestParameter = async (
     url: string,
