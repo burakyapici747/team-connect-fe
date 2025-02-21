@@ -17,5 +17,5 @@ export const sendMessage: <T extends object>(channelId: string, requestBody: T) 
     channelId: string,
     requestBody: T
 ): Promise<ApiResponse<void>> => {
-    return postSingleWithPathVariable<T, void>(API_ENDPOINTS.MESSAGES.SEND_MESSAGE, requestBody, "", { channelId });
+    return postSingleWithPathVariable<T, void>("", requestBody, API_ENDPOINTS.MESSAGES.SEND_MESSAGE, { channelId });
 };
