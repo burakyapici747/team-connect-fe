@@ -42,7 +42,6 @@ export const useMessages = (channelId: string) => {
     isLoading: messagesQuery.isLoading,
     error: messagesQuery.error,
     sendMessage: sendMessageMutation.mutate,
-    isSending: sendMessageMutation.isLoading,
     sendError: sendMessageMutation.error,
   };
 };
