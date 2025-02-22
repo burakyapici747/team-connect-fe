@@ -37,17 +37,25 @@ const createFullURLForRequestParameter = (
     return `?${queryString}`;
 };
 
-const createFullURLForPathVariable = (
-    pathTemplate: string,
-    pathVariables: { [key: string]: string | number | boolean }
-): string => {
-    let path = pathTemplate;
-    for (const key in pathVariables) {
-        path = path.replace(`{${key}}`, encodeURIComponent(String(pathVariables[key])));
-    }
-    return path;
-};
+function createFullURLForPathVariable(
+    template: string,
+    variables: { [key: string]: string | number | boolean }
+): string {
+    return Object.keys(variables).reduce((acc, key) => {
+        return acc.replace(`{${key}}`, String(variables[key]));
+    }, template);
+}
 
+// const createFullURLForPathVariable = (
+//     pathTemplate: string,
+//     pathVariables: { [key: string]: string | number | boolean }
+// ): string => {
+//     let path = pathTemplate;
+//     for (const key in pathVariables) {
+//         path = path.replace(`{${key}}`, encodeURIComponent(String(pathVariables[key])));
+//     }
+//     return path;
+// };
 
 export const getWithRequestParameter = async (
     url: string,

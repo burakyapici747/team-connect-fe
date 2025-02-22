@@ -24,7 +24,7 @@ export default function DirectMessagePage({
 }: {
   params: { channelId: string };
 }) {
-  const { messages, isLoading, error, sendMessage, isSending } = useMessages(
+  const { messages, isLoading, error, sendMessage } = useMessages(
     params.channelId
   );
 
@@ -35,7 +35,6 @@ export default function DirectMessagePage({
   const shouldScrollToBottom = useRef(true);
   const queryClient = useQueryClient();
 
-  // Mesaj listesi boş veya null olduğunda default olarak boş array kullanıyoruz
   const messageList: MessageOutput[] = messages ?? [];
 
   const scrollToBottom = () => {
@@ -87,7 +86,7 @@ export default function DirectMessagePage({
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!messageInput.trim() || isSending) return;
+    if (!messageInput.trim()) return;
 
     try {
       await sendMessage(
