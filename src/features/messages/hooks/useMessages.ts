@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiResponse } from "@/shared/api/response/response";
 import { MessageOutput } from "@/features/messages/api/output/MessageOutput";
-import { getMessagesByChannelId, sendMessage } from "@/features/messages/api";
+import {
+  getMessagesByChannelId,
+  sendMessage as sendMessageApi,
+} from "@/features/messages/api";
 
 export const useMessages = (channelId: string) => {
   const queryClient = useQueryClient();
@@ -14,10 +17,11 @@ export const useMessages = (channelId: string) => {
     queryKey: ["messages", channelId],
     queryFn: () => getMessagesByChannelId(channelId),
     retry: false,
-    staleTime: Infinity,
+    //staleTime: Infinity,
+    refetchOnWindowFocus: false,
     select: (response) => {
       if (response.isSuccess) {
-        return response.data;
+        return response.data.data;
       } else {
         throw new Error(response.message);
       }
@@ -29,7 +33,7 @@ export const useMessages = (channelId: string) => {
     Error,
     { content: string }
   >({
-    mutationFn: (requestBody) => sendMessage(channelId, requestBody),
+    mutationFn: (requestBody) => sendMessageApi(channelId, requestBody),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["messages", channelId],
@@ -40,8 +44,8 @@ export const useMessages = (channelId: string) => {
   return {
     messages: messagesQuery.data,
     isLoading: messagesQuery.isLoading,
-    error: messagesQuery.error,
-    sendMessage: sendMessageMutation.mutate,
-    sendError: sendMessageMutation.error,
+    fetchError: messagesQuery.error,
+    sendMessage: sendMessageMutation.mutateAsync,
+    sendMessageError: sendMessageMutation.error,
   };
 };
