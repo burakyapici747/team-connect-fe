@@ -16,8 +16,6 @@ class WebSocketService {
       }
       const socket = new SockJS(`${this.baseUrl}/ws`);
 
-
-
       this.client = new Client({
         webSocketFactory: () => socket,
         reconnectDelay: 1000,
