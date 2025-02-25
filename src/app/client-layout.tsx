@@ -3,7 +3,7 @@
 import React from "react";
 import { Inter } from "next/font/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,8 +25,10 @@ export default function ClientLayout({
     <div className={inter.className}>
       <QueryClientProvider client={queryClient}>
         {children}
-        <ReactQueryDevtoolsPanel/>
       </QueryClientProvider>
     </div>
   );
 }
+
+
+//<ReactQueryDevtoolsPanel />
