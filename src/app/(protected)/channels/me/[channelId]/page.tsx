@@ -16,11 +16,7 @@ import {
 import { useMessages } from "@/features/messages/hooks/useMessages";
 import { useWebSocket } from "@/features/messages/hooks/useWebsocket";
 
-export default function DirectMessagePage({
-  params,
-}: {
-  params: { channelId: string };
-}) {
+export default function DirectMessagePage({ params }: { params: { channelId: string }; }) {
   const [messageInput, setMessageInput] = useState("");
   const {
     messages,
@@ -28,9 +24,7 @@ export default function DirectMessagePage({
     fetchError,
     sendMessage,
     sendMessageError,
-    fetchPreviousMessages,
-    isFetchingPreviousPage,
-    hasPreviousPage,
+    getMessagesWithBeforeId,
   } = useMessages(params.channelId);
 
   const { error: wsError } = useWebSocket({ channelId: params.channelId });
@@ -73,12 +67,20 @@ export default function DirectMessagePage({
       const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
       setShouldScrollToBottom(isAtBottom);
 
-      const isAtTop = scrollTop < 100;
+      const isAtTop = scrollTop < 1;
+
+      setShouldScrollToBottom(isAtBottom);
+
       setIsNearTop(isAtTop);
+
+      if (isAtTop && messages.length > 0) {
+        getMessagesWithBeforeId(messages[0].id);
+      }
 
       setScrollPosition(scrollTop);
     }
-  }, []);
+  },  [getMessagesWithBeforeId]);
+
 
   useEffect(() => {
     const messageList = messageListRef.current;
@@ -88,28 +90,6 @@ export default function DirectMessagePage({
     }
   }, [handleScroll]);
 
-  useEffect(() => {
-    const loadPreviousMessages = async () => {
-      if (isNearTop && hasPreviousPage && !isFetchingPreviousPage) {
-        const currentScrollHeight = messageListRef.current?.scrollHeight || 0;
-
-        await fetchPreviousMessages();
-
-        if (messageListRef.current) {
-          const newScrollHeight = messageListRef.current.scrollHeight;
-          const heightDifference = newScrollHeight - currentScrollHeight;
-          messageListRef.current.scrollTop = heightDifference + 10; // Biraz boşluk bırak
-        }
-      }
-    };
-
-    loadPreviousMessages();
-  }, [
-    isNearTop,
-    hasPreviousPage,
-    isFetchingPreviousPage,
-    fetchPreviousMessages,
-  ]);
 
   const isFirstMessageInGroup = (index: number) => {
     if (index === 0) return true;
@@ -117,14 +97,6 @@ export default function DirectMessagePage({
     const previousMessage = messages[index - 1];
     return currentMessage.author.id !== previousMessage.author.id;
   };
-
-  const sortedMessages = Array.isArray(messages)
-    ? [...messages].sort((a, b) => {
-        const timestampA = new Date(a.timestamp).getTime();
-        const timestampB = new Date(b.timestamp).getTime();
-        return timestampA - timestampB;
-      })
-    : [];
 
   return (
     <div className="flex h-full" style={{ background: "var(--discord-bg)" }}>
@@ -167,29 +139,6 @@ export default function DirectMessagePage({
           style={{ scrollBehavior: "smooth" }}
         >
           <div className="py-4">
-            {/* Önceki mesajları yükleme göstergesi */}
-            {isFetchingPreviousPage && (
-              <div className="flex justify-center py-4">
-                <span className="text-sm text-gray-400">
-                  Önceki mesajlar yükleniyor...
-                </span>
-              </div>
-            )}
-
-            {/* Daha fazla mesaj yükleme butonu */}
-            {hasPreviousPage && !isFetchingPreviousPage && (
-              <div className="flex justify-center py-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => fetchPreviousMessages()}
-                  className="text-xs text-gray-400 hover:text-white"
-                >
-                  Daha fazla mesaj yükle
-                </Button>
-              </div>
-            )}
-
             {isLoading && (
               <div className="flex justify-center py-4">
                 <span className="text-sm text-gray-400">
@@ -204,8 +153,8 @@ export default function DirectMessagePage({
                 </span>
               </div>
             )}
-            {sortedMessages.length > 0
-              ? sortedMessages.map((message, index) => {
+            {messages.length > 0
+              ? messages.map((message, index) => {
                   const showFullHeader = isFirstMessageInGroup(index);
 
                   return (
