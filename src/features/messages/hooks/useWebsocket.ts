@@ -30,16 +30,13 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                 stompMessage.body
               );
 
-              // WebsocketMessageOutput'u MessageOutput formatına dönüştür
               const formattedMessage: MessageOutput = {
                 ...parsedMessage,
               };
 
-              // useInfiniteQuery ile uyumlu çalışacak şekilde cache'i güncelle
               queryClient.setQueryData(
                 ["messages", channelId],
                 (oldData: any) => {
-                  // Eğer veri yoksa, yeni bir veri yapısı oluştur
                   if (!oldData) {
                     return {
                       pages: [
@@ -52,7 +49,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                     };
                   }
 
-                  // Tüm sayfalardaki mesajları düzleştir
                   const allMessages = oldData.pages.flatMap((page: any) => {
                     if (!page.isSuccess) return [];
 
@@ -69,7 +65,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                     return [];
                   });
 
-                  // Mesaj zaten varsa, işlem yapma
                   if (
                     allMessages.some(
                       (msg: MessageOutput) => msg.id === formattedMessage.id
@@ -78,7 +73,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                     return oldData;
                   }
 
-                  // Yeni mesajı son sayfaya ekle
                   const updatedPages = [...oldData.pages];
                   const lastPageIndex = updatedPages.length - 1;
 
@@ -88,7 +82,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                   ) {
                     const lastPage = updatedPages[lastPageIndex];
 
-                    // Son sayfanın veri yapısını kontrol et
                     let lastPageData;
                     if (Array.isArray(lastPage.data)) {
                       lastPageData = [...lastPage.data, formattedMessage];
@@ -102,7 +95,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                       lastPageData = [formattedMessage];
                     }
 
-                    // Mesajları timestamp'e göre sırala
                     const sortedMessages = lastPageData.sort(
                       (a: MessageOutput, b: MessageOutput) => {
                         const timestampA = new Date(a.timestamp).getTime();
@@ -111,20 +103,17 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                       }
                     );
 
-                    // Son sayfayı güncelle
                     updatedPages[lastPageIndex] = {
                       ...lastPage,
                       data: sortedMessages,
                     };
                   } else {
-                    // Eğer hiç sayfa yoksa veya son sayfa başarısızsa, yeni bir sayfa ekle
                     updatedPages.push({
                       isSuccess: true,
                       data: [formattedMessage],
                     });
                   }
 
-                  // Tüm mesajları tek bir dizide birleştir ve benzersiz yap
                   const allUpdatedMessages = updatedPages.flatMap(
                     (page: any) => {
                       if (!page.isSuccess) return [];
@@ -141,7 +130,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                     ).values()
                   );
 
-                  // Benzersiz mesajları timestamp'e göre sırala
                   const sortedUniqueMessages = uniqueMessages.sort(
                     (a: MessageOutput, b: MessageOutput) => {
                       const timestampA = new Date(a.timestamp).getTime();
@@ -150,7 +138,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                     }
                   );
 
-                  // Tüm mesajları tek bir sayfada topla
                   return {
                     pages: [
                       {
