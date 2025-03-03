@@ -23,7 +23,6 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
     isLoading,
     fetchError,
     sendMessage,
-    sendMessageError,
     getMessagesWithBeforeId,
   } = useMessages(params.channelId);
 
@@ -61,24 +60,24 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
   }, [isLoading]);
 
   const handleScroll = useCallback(() => {
-    if (messageListRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = messageListRef.current;
-
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-      setShouldScrollToBottom(isAtBottom);
-
-      const isAtTop = scrollTop < 1;
-
-      setShouldScrollToBottom(isAtBottom);
-
-      setIsNearTop(isAtTop);
-
-      if (isAtTop && messages.length > 0) {
-        getMessagesWithBeforeId(messages[0].id);
-      }
-
-      setScrollPosition(scrollTop);
-    }
+    // if (messageListRef.current) {
+    //   const { scrollTop, scrollHeight, clientHeight } = messageListRef.current;
+    //
+    //   const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+    //   setShouldScrollToBottom(isAtBottom);
+    //
+    //   const isAtTop = scrollTop < 1;
+    //
+    //   setShouldScrollToBottom(isAtBottom);
+    //
+    //   setIsNearTop(isAtTop);
+    //
+    //   if (isAtTop && messages.length > 0) {
+    //     getMessagesWithBeforeId(messages[0].id);
+    //   }
+    //
+    //   setScrollPosition(scrollTop);
+    // }
   },  [getMessagesWithBeforeId]);
 
 
@@ -159,7 +158,7 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
 
                   return (
                     <div
-                      key={message.id}
+                      key={message?.id}
                       className={`group relative flex items-start gap-4 px-2 ${
                         !showFullHeader ? "mt-0.5" : "mt-[17px]"
                       }`}
@@ -169,7 +168,7 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
                           className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-sm font-medium"
                           style={{ background: "var(--discord-primary)" }}
                         >
-                          {message.author.username.charAt(0).toUpperCase()}
+                          {message?.author?.username?.charAt(0).toUpperCase()}
                         </div>
                       ) : (
                         <div className="w-10 flex-shrink-0" />
@@ -181,15 +180,15 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
                               className="text-[0.8125rem] font-medium hover:underline cursor-pointer"
                               style={{ color: "var(--discord-text)" }}
                             >
-                              {message.author.id === "currentUserId"
+                              {message.author?.id === "currentUserId"
                                 ? "You"
-                                : message.author.username}
+                                : message.author?.username}
                             </span>
                             <span
                               className="text-[0.6875rem]"
                               style={{ color: "var(--discord-text-muted)" }}
                             >
-                              {new Date(message.timestamp).toLocaleDateString(
+                              {new Date(message?.timestamp).toLocaleDateString(
                                 "tr-TR",
                                 {
                                   day: "numeric",

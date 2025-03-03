@@ -25,7 +25,6 @@ export default function ClientLayout({
     <div className={inter.className}>
       <QueryClientProvider client={queryClient}>
         {children}
-        <ReactQueryDevtoolsPanel />
       </QueryClientProvider>
     </div>
   );
