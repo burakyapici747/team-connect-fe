@@ -31,11 +31,11 @@ export const getMessagesByChannelIdWithBefore = async (
 export const sendMessage: <T extends object>(
   channelId: string,
   requestBody: T
-) => Promise<ApiResponse<void>> = async <T extends object>(
+) => Promise<ApiResponse<MessageOutput>> = async <T extends object>(
   channelId: string,
   requestBody: T
-): Promise<ApiResponse<void>> => {
-  return postSingleWithPathVariable<T, void>(
+): Promise<ApiResponse<MessageOutput>> => {
+  return postSingleWithPathVariable<T, MessageOutput>(
     "",
     requestBody,
     API_ENDPOINTS.MESSAGES.SEND_MESSAGE,
