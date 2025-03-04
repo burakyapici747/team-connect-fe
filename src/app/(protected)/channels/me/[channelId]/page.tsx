@@ -158,7 +158,7 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
 
                   return (
                     <div
-                      key={message?.id}
+                      key={message.id}
                       className={`group relative flex items-start gap-4 px-2 ${
                         !showFullHeader ? "mt-0.5" : "mt-[17px]"
                       }`}
@@ -223,30 +223,19 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
 
                       {/* Hover ile gösterilen aksiyon butonları */}
                       <div className="absolute right-2 top-0 hidden group-hover:flex items-center gap-0.5 py-1 px-0.5 rounded bg-[#313338] shadow-md">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-8 hover:bg-[#2E3035]"
-                          style={{ color: "var(--discord-text-muted)" }}
-                        >
-                          <Laugh className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-8 hover:bg-[#2E3035]"
-                          style={{ color: "var(--discord-text-muted)" }}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-8 hover:bg-[#2E3035]"
-                          style={{ color: "var(--discord-text-muted)" }}
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        {['laugh', 'edit', 'more'].map((buttonType) => (
+                            <Button
+                                key={`${message.id}-${buttonType}`}
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-8 hover:bg-[#2E3035]"
+                                style={{ color: "var(--discord-text-muted)" }}
+                            >
+                              {buttonType === 'laugh' && <Laugh className="h-4 w-4" />}
+                              {buttonType === 'edit' && <Edit2 className="h-4 w-4" />}
+                              {buttonType === 'more' && <MoreHorizontal className="h-4 w-4" />}
+                            </Button>
+                        ))}
                       </div>
                     </div>
                   );

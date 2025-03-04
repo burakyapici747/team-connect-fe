@@ -41,7 +41,6 @@ export const useMessages = (channelId: string) => {
     staleTime: Infinity,
   });
 
-  // Function to fetch earlier messages
   const getMessagesWithBeforeId = async (beforeId: string) => {
     try {
       await messageQuery.fetchNextPage({ pageParam: beforeId });
@@ -50,21 +49,20 @@ export const useMessages = (channelId: string) => {
     }
   };
 
-  // Mutation for sending messages
   const sendMessageMutation = useMutation<ApiResponse<MessageOutput>, Error, { content: string }>({
     mutationFn: async (requestBody) => {
-      return await sendMessage(channelId, requestBody);
+      const response = await sendMessage(channelId, requestBody);
+      return response;
     },
     onMutate: async (newMessage) => {
-      // Cancel any outgoing refetches to avoid overwriting our optimistic update
-      await queryClient.cancelQueries({ queryKey: ["messages", channelId] });
+      await queryClient.cancelQueries(["messages", channelId]);
 
-      // Snapshot the previous value
       const previousMessages = queryClient.getQueryData(["messages", channelId]);
 
-      // Create an optimistic message
+      const tempId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
       const optimisticMessage: MessageOutput = {
-        id: `temp-${Date.now()}`,
+        id: tempId,
         channelId,
         content: newMessage.content,
         timestamp: new Date().toISOString(),
@@ -77,43 +75,41 @@ export const useMessages = (channelId: string) => {
         author: {
           id: user?.id || "currentUserId",
           username: user?.username || "You",
-          // Add other required author fields with fallbacks
         },
         isPending: true,
       };
 
-      // Optimistically update the cache
       queryClient.setQueryData(["messages", channelId], (old: any) => {
         if (!old) return { pages: [[optimisticMessage]], pageParams: [undefined] };
 
         const newData = JSON.parse(JSON.stringify(old));
-        // Add the optimistic message to the most recent page (last in the array)
+
         const latestPageIndex = newData.pages.length - 1;
-        newData.pages[latestPageIndex] = [...newData.pages[latestPageIndex], optimisticMessage];
+
+        newData.pages[latestPageIndex] = [optimisticMessage, ...newData.pages[latestPageIndex]];
+
 
         return newData;
       });
 
-      return { previousMessages };
+      return { previousMessages, tempId };
     },
-    onSuccess: (response) => {
-      // Replace the optimistic message with the actual one
+
+    onSuccess: (response, variables, context) => {
       queryClient.setQueryData(["messages", channelId], (old: any) => {
         if (!old) return { pages: [[response.data.data]], pageParams: [undefined] };
 
         const newData = JSON.parse(JSON.stringify(old));
         const latestPageIndex = newData.pages.length - 1;
 
-        // Replace any temporary message with the actual one
         newData.pages[latestPageIndex] = newData.pages[latestPageIndex].map(
-            (msg: MessageOutput) => msg.id.toString().startsWith('temp-') ? response.data.data : msg
+            (msg: MessageOutput) => msg.id === context?.tempId ? response.data.data : msg
         );
 
         return newData;
       });
     },
     onError: (error, variables, context) => {
-      // Revert to the previous state if there's an error
       if (context?.previousMessages) {
         queryClient.setQueryData(["messages", channelId], context.previousMessages);
       }
@@ -121,7 +117,6 @@ export const useMessages = (channelId: string) => {
     }
   });
 
-  // Get all messages by flattening the pages and ensuring correct order
   const allMessages = messageQuery.data?.pages.flat().reverse() || [];
 
   return {
