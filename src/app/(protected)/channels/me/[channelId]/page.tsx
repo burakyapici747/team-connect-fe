@@ -60,24 +60,24 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
   }, [isLoading]);
 
   const handleScroll = useCallback(() => {
-    // if (messageListRef.current) {
-    //   const { scrollTop, scrollHeight, clientHeight } = messageListRef.current;
-    //
-    //   const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-    //   setShouldScrollToBottom(isAtBottom);
-    //
-    //   const isAtTop = scrollTop < 1;
-    //
-    //   setShouldScrollToBottom(isAtBottom);
-    //
-    //   setIsNearTop(isAtTop);
-    //
-    //   if (isAtTop && messages.length > 0) {
-    //     getMessagesWithBeforeId(messages[0].id);
-    //   }
-    //
-    //   setScrollPosition(scrollTop);
-    // }
+    if (messageListRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messageListRef.current;
+
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShouldScrollToBottom(isAtBottom);
+
+      const isAtTop = scrollTop < 1;
+
+      setShouldScrollToBottom(isAtBottom);
+
+      setIsNearTop(isAtTop);
+
+      if (isAtTop && messages.length > 0) {
+        getMessagesWithBeforeId(messages[0].id);
+      }
+
+      setScrollPosition(scrollTop);
+    }
   },  [getMessagesWithBeforeId]);
 
 

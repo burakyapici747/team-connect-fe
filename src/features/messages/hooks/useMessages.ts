@@ -1,17 +1,8 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
-import { ApiResponse } from "@/shared/api/response/response";
-import { MessageOutput } from "@/features/messages/api/output/MessageOutput";
-import {
-  getMessagesByChannelId,
-  getMessagesByChannelIdWithBefore,
-  sendMessage,
-} from "@/features/messages/api";
-import { useUser } from "@/features/users/hooks/useUser";
+import {useInfiniteQuery, useMutation, useQueryClient,} from "@tanstack/react-query";
+import {ApiResponse} from "@/shared/api/response/response";
+import {MessageOutput} from "@/features/messages/api/output/MessageOutput";
+import {getMessagesByChannelId, getMessagesByChannelIdWithBefore, sendMessage,} from "@/features/messages/api";
+import {useUser} from "@/features/users/hooks/useUser";
 
 export const useMessages = (channelId: string) => {
   const queryClient = useQueryClient();
@@ -80,16 +71,11 @@ export const useMessages = (channelId: string) => {
       };
 
       queryClient.setQueryData(["messages", channelId], (old: any) => {
-        if (!old) return { pages: [[optimisticMessage]], pageParams: [undefined] };
+        if (old === undefined) return { pages: [[optimisticMessage]], pageParams: [undefined] };
 
-        const newData = JSON.parse(JSON.stringify(old));
+        old.pages[0].unshift(optimisticMessage);
 
-        const latestPageIndex = newData.pages.length - 1;
-
-        newData.pages[latestPageIndex] = [optimisticMessage, ...newData.pages[latestPageIndex]];
-
-
-        return newData;
+        return JSON.parse(JSON.stringify(old));
       });
 
       return { previousMessages, tempId };
@@ -97,23 +83,50 @@ export const useMessages = (channelId: string) => {
 
     onSuccess: (response, variables, context) => {
       queryClient.setQueryData(["messages", channelId], (old: any) => {
-        if (!old) return { pages: [[response.data.data]], pageParams: [undefined] };
+        if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
 
         const newData = JSON.parse(JSON.stringify(old));
-        const latestPageIndex = newData.pages.length - 1;
 
-        newData.pages[latestPageIndex] = newData.pages[latestPageIndex].map(
-            (msg: MessageOutput) => msg.id === context?.tempId ? response.data.data : msg
-        );
+        if(newData.pages[0][0].id === context.tempId){
+          newData.pages[0][0] = response.data.data;
+          newData.pages[0][0].isPending = false;
+        }
+
+        for(let i: number = 0; i < newData.pages.length; i++){
+          if(newData.pages[i].length < 51){
+            newData.pageParams[i] = newData.pages[i][newData.pages[i].length -1].id;
+            return JSON.parse(JSON.stringify(newData))
+          }
+
+          const currentPageLastMessage: MessageOutput = newData.pages[i].pop();
+
+          if(newData.pages[i + 1] === undefined){
+            newData.pages.push([]);
+            newData.pageParams.push(undefined);
+          }
+
+          newData.pages[i + 1].unshift(currentPageLastMessage);
+
+          if(newData.pages[i].length < 1) break;
+
+          newData.pageParams[i] = newData.pages[i][newData.pages[i].length -1].id;
+        }
 
         return newData;
       });
     },
+
     onError: (error, variables, context) => {
-      if (context?.previousMessages) {
-        queryClient.setQueryData(["messages", channelId], context.previousMessages);
-      }
-      console.error("Message sending failed:", error);
+      queryClient.setQueryData(["messages", channelId], (old: any) => {
+        if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
+
+        const newData = JSON.parse(JSON.stringify(old));
+
+        if(newData.pages[0][0].id === context.tempId){
+          newData.pages[0][0] = response.data.data;
+        }
+
+      });
     }
   });
 
@@ -126,7 +139,7 @@ export const useMessages = (channelId: string) => {
     isFetching: messageQuery.isFetching,
     fetchNextPage: messageQuery.fetchNextPage,
     hasNextPage: messageQuery.hasNextPage,
-    sendMessage: sendMessageMutation.mutateAsync, // Using mutateAsync to allow await
+    sendMessage: sendMessageMutation.mutateAsync,
     getMessagesWithBeforeId,
   };
 };
