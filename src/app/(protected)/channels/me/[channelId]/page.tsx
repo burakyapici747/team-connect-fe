@@ -31,17 +31,15 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [isNearTop, setIsNearTop] = useState(false);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
 
     try {
-      await sendMessage({ content: messageInput });
       setMessageInput("");
       setShouldScrollToBottom(true);
+      await sendMessage({ content: messageInput });
     } catch (error) {
       console.error("Mesaj gönderme işlemi başarısız:", error);
     }
@@ -59,36 +57,13 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
     }
   }, [isLoading]);
 
-  const handleScroll = useCallback(() => {
-    if (messageListRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = messageListRef.current;
-
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-      setShouldScrollToBottom(isAtBottom);
-
-      const isAtTop = scrollTop < 1;
-
-      setShouldScrollToBottom(isAtBottom);
-
-      setIsNearTop(isAtTop);
-
-      if (isAtTop && messages.length > 0) {
-        getMessagesWithBeforeId(messages[0].id);
-      }
-
-      setScrollPosition(scrollTop);
-    }
-  },  [getMessagesWithBeforeId]);
-
-
-  useEffect(() => {
-    const messageList = messageListRef.current;
-    if (messageList) {
-      messageList.addEventListener("scroll", handleScroll);
-      return () => messageList.removeEventListener("scroll", handleScroll);
-    }
-  }, [handleScroll]);
-
+  // useEffect(() => {
+  //   const messageList = messageListRef.current;
+  //   if (messageList) {
+  //     messageList.addEventListener("scroll", handleScroll);
+  //     return () => messageList.removeEventListener("scroll", handleScroll);
+  //   }
+  // }, [handleScroll]);
 
   const isFirstMessageInGroup = (index: number) => {
     if (index === 0) return true;
@@ -203,7 +178,9 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
                         )}
                         <div className="relative">
                           <p
-                            className={`break-words text-[0.8125rem] leading-[1.1875rem] text-[var(--discord-text)]`}
+                              className={`break-words text-[0.8125rem] leading-[1.1875rem] ${
+                                  message.isPending ? "text-gray-400" : "text-[var(--discord-text)]"
+                              }`}
                           >
                             {message.content}
                           </p>

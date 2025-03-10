@@ -42,8 +42,7 @@ export const useMessages = (channelId: string) => {
 
   const sendMessageMutation = useMutation<ApiResponse<MessageOutput>, Error, { content: string }>({
     mutationFn: async (requestBody) => {
-      const response = await sendMessage(channelId, requestBody);
-      return response;
+      return await sendMessage(channelId, requestBody);
     },
     onMutate: async (newMessage) => {
       await queryClient.cancelQueries(["messages", channelId]);
@@ -82,19 +81,23 @@ export const useMessages = (channelId: string) => {
     },
 
     onSuccess: (response, variables, context) => {
+      console.log("onSuccess tetiklendi.");
       queryClient.setQueryData(["messages", channelId], (old: any) => {
         if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
 
         const newData = JSON.parse(JSON.stringify(old));
 
-        if(newData.pages[0][0].id === context.tempId){
-          newData.pages[0][0] = response.data.data;
-          newData.pages[0][0].isPending = false;
+        for(let i: number = 0; i < newData.pages[0].length; i++){
+          if(newData.pages[0][i].id === context.tempId){
+            newData.pages[0][i] = response.data.data;
+            newData.pages[0][i].isPending = false;
+            break;
+          }
         }
 
         for(let i: number = 0; i < newData.pages.length; i++){
           if(newData.pages[i].length < 51){
-            newData.pageParams[i] = newData.pages[i][newData.pages[i].length -1].id;
+            if(i > 0) newData.pageParams[i] = newData.pages[i - 1][newData.pages[i - 1].length -1].id;
             return JSON.parse(JSON.stringify(newData))
           }
 
@@ -109,7 +112,7 @@ export const useMessages = (channelId: string) => {
 
           if(newData.pages[i].length < 1) break;
 
-          newData.pageParams[i] = newData.pages[i][newData.pages[i].length -1].id;
+          if(i > 0) newData.pageParams[i] = newData.pages[i - 1][newData.pages[i - 1].length -1].id;
         }
 
         return newData;
