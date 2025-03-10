@@ -30,4 +30,5 @@ export interface MessageOutput {
   mentions: Mention[];
   reactions: Record<string, number>[];
   author: Author;
+  isPending: boolean;
 }

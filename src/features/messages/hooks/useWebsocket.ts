@@ -28,45 +28,37 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
                     channelId,
                     (stompMessage: IMessage) => {
                         try {
-                            const parsedMessage: WebsocketMessageOutput = JSON.parse(stompMessage.body);
-                            const formattedMessage: MessageOutput = { ...parsedMessage };
+                            const websocketMessage: MessageOutput = JSON.parse(stompMessage.body);
 
-                            console.log("Received WebSocket message:", {
-                                message: formattedMessage,
-                                currentUserId: user?.id
-                            });
+                            queryClient.setQueryData(["messages", channelId], (old: any) => {
+                                const newData = JSON.parse(JSON.stringify(old));
 
-                            // Kendi mesajınızı filtreleyin:
-                            if (formattedMessage.author.id === user?.id) {
-                                console.log("Kendi mesajınızı eklenmiyor.");
-                                return;
-                            }
+                                if(websocketMessage.author.id === user?.id) return;
 
-                            queryClient.setQueryData(["messages", channelId], (oldData: any) => {
-                                // Eğer cache boşsa, tek bir sayfa oluşturun.
-                                if (!oldData) {
-                                    return {
-                                        pages: [[formattedMessage]],
-                                        pageParams: [undefined],
-                                    };
+                                newData.pages[0].unshift(websocketMessage);
+
+                                for(let i: number = 0; i < newData.pages.length; i++){
+
+                                    if(newData.pages[i].length < 51){
+                                        if(i > 0) newData.pageParams[i] = newData.pages[i - 1][newData.pages[i - 1].length -1].id;
+                                        return JSON.parse(JSON.stringify(newData))
+                                    }
+
+                                    const currentPageLastMessage: MessageOutput = newData.pages[i].pop();
+
+                                    if(newData.pages[i + 1] === undefined){
+                                        newData.pages.push([]);
+                                        newData.pageParams.push(undefined);
+                                    }
+
+                                    newData.pages[i + 1].unshift(currentPageLastMessage);
+
+                                    if(newData.pages[i].length < 1) break;
+
+                                    if(i > 0) newData.pageParams[i] = newData.pages[i - 1][newData.pages[i - 1].length -1].id;
                                 }
 
-                                // Tüm mevcut mesajları içeren tek bir dizi elde edin.
-                                const allMessages = oldData.pages.flat();
-
-                                // Aynı mesaj daha önce eklenmişse, güncelleme yapmayın.
-                                if (allMessages.some((msg: MessageOutput) => msg.id === formattedMessage.id)) {
-                                    return oldData;
-                                }
-
-                                const updatedMessages = [...allMessages, formattedMessage].sort(
-                                    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-                                );
-
-                                return {
-                                    pages: [updatedMessages],
-                                    pageParams: [undefined],
-                                };
+                                return newData;
                             });
 
                             queryClient.invalidateQueries({
