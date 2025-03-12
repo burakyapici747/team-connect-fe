@@ -1,7 +1,7 @@
 import {useInfiniteQuery, useMutation, useQueryClient,} from "@tanstack/react-query";
 import {ApiResponse} from "@/shared/api/response/response";
 import {MessageOutput} from "@/features/messages/api/output/MessageOutput";
-import {getMessagesByChannelId, getMessagesByChannelIdWithBefore, sendMessage,} from "@/features/messages/api";
+import {getMessagesByChannelId, getMessagesByChannelIdWithBefore, sendMessage} from "@/features/messages/api";
 import {useUser} from "@/features/users/hooks/useUser";
 
 export const useMessages = (channelId: string) => {
@@ -12,6 +12,7 @@ export const useMessages = (channelId: string) => {
     queryKey: ["messages", channelId],
     queryFn: async ({ pageParam }): Promise<MessageOutput[]> => {
       if (pageParam === undefined) {
+        debugger;
         const response = await getMessagesByChannelId(channelId);
         return response.data.data;
       } else {
@@ -81,7 +82,7 @@ export const useMessages = (channelId: string) => {
     },
 
     onSuccess: (response, variables, context) => {
-      console.log("onSuccess tetiklendi.");
+      debugger;
       queryClient.setQueryData(["messages", channelId], (old: any) => {
         if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
 
@@ -120,16 +121,23 @@ export const useMessages = (channelId: string) => {
     },
 
     onError: (error, variables, context) => {
-      queryClient.setQueryData(["messages", channelId], (old: any) => {
-        if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
+      console.log("onError tetiklendi");
+      console.log(error);
 
-        const newData = JSON.parse(JSON.stringify(old));
-
-        if(newData.pages[0][0].id === context.tempId){
-          newData.pages[0][0] = response.data.data;
-        }
-
-      });
+      console.log("variables");
+      console.log(variables);
+      console.log("context");
+      console.log(context);
+      // queryClient.setQueryData(["messages", channelId], (old: any) => {
+      //   if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
+      //
+      //   const newData = JSON.parse(JSON.stringify(old));
+      //
+      //   if(newData.pages[0][0].id === context.tempId){
+      //     newData.pages[0][0] = response.data.data;
+      //   }
+      //
+      // });
     }
   });
 

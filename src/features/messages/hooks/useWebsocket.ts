@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import webSocketService from "@/core/lib/websocketService";
 import { IMessage, StompSubscription } from "@stomp/stompjs";
-import { WebsocketMessageOutput } from "@/features/messages/api/output/WebsocketMessageOutput";
 import { useQueryClient } from "@tanstack/react-query";
 import { MessageOutput } from "@/features/messages/api/output/MessageOutput";
 import {useUser} from "@/features/users/hooks/useUser";
@@ -23,40 +22,40 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
             try {
                 await webSocketService.connect();
                 console.log("WebSocket connected!");
-
                 subscription = webSocketService.subscribe(
                     channelId,
                     (stompMessage: IMessage) => {
                         try {
                             const websocketMessage: MessageOutput = JSON.parse(stompMessage.body);
 
+                            if(websocketMessage.author.id === user?.id) return;
+
                             queryClient.setQueryData(["messages", channelId], (old: any) => {
+                                if(old === undefined) return;
+
                                 const newData = JSON.parse(JSON.stringify(old));
 
-                                if(websocketMessage.author.id === user?.id) return;
+                                const allMessages = newData.pages.flat();
 
-                                newData.pages[0].unshift(websocketMessage);
+                                allMessages.push(websocketMessage);
 
-                                for(let i: number = 0; i < newData.pages.length; i++){
+                                allMessages.sort((a: MessageOutput, b: MessageOutput)=> {
+                                    return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+                                });
 
-                                    if(newData.pages[i].length < 51){
-                                        if(i > 0) newData.pageParams[i] = newData.pages[i - 1][newData.pages[i - 1].length -1].id;
-                                        return JSON.parse(JSON.stringify(newData))
-                                    }
+                                const pageSize: number = 50;
+                                const chunked: MessageOutput[] = [];
 
-                                    const currentPageLastMessage: MessageOutput = newData.pages[i].pop();
-
-                                    if(newData.pages[i + 1] === undefined){
-                                        newData.pages.push([]);
-                                        newData.pageParams.push(undefined);
-                                    }
-
-                                    newData.pages[i + 1].unshift(currentPageLastMessage);
-
-                                    if(newData.pages[i].length < 1) break;
-
-                                    if(i > 0) newData.pageParams[i] = newData.pages[i - 1][newData.pages[i - 1].length -1].id;
+                                for(let i = 0; i < allMessages.length; i += pageSize){
+                                    chunked.push(allMessages.slice(i, i + pageSize));
                                 }
+
+                                newData.pages = chunked;
+
+                                newData.pageParams = chunked.map((chunk, idx) => {
+                                    if (idx === 0) return undefined;
+                                    return chunked[idx - 1][chunked[idx - 1].length - 1].id;
+                                });
 
                                 return newData;
                             });
@@ -86,7 +85,6 @@ export const useWebSocket = ({ channelId }: UseWebSocketOptions) => {
         return () => {
             subscription?.unsubscribe();
             webSocketService.disconnect();
-            console.log("WebSocket bağlantısı kesildi!");
         };
     }, [channelId, queryClient, user]);
 
