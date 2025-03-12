@@ -163,7 +163,7 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
                               className="text-[0.6875rem]"
                               style={{ color: "var(--discord-text-muted)" }}
                             >
-                              {new Date(message?.timestamp).toLocaleDateString(
+                              {new Date(message?.timestamp * 1000).toLocaleDateString(
                                 "tr-TR",
                                 {
                                   day: "numeric",
@@ -186,13 +186,10 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
                           </p>
                           {!showFullHeader && (
                             <span className="absolute top-1 -left-12 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-100">
-                              {new Date(message.timestamp).toLocaleTimeString(
-                                "tr-TR",
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
+                              {new Date(message.timestamp * 1000).toLocaleTimeString("tr-TR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </span>
                           )}
                         </div>
