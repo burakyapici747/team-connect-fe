@@ -8,11 +8,13 @@ import { API_ENDPOINTS } from "@/core/config/axios/api-endpoints";
 
 export const getMessagesByChannelId = async (
   channelId: string,
+  params: { before?: string, after?: string, limit?: number }
 ): Promise<ApiResponse<MessageOutput[]>> => {
   return getAllWithPathVariable<MessageOutput>(
-    "",
-    API_ENDPOINTS.MESSAGES.DM_CHANNEL_MESSAGES,
-    { channelId }
+      "",
+      API_ENDPOINTS.MESSAGES.DM_CHANNEL_MESSAGES,
+      { channelId },
+      { params: { before: params.before, after: params.after, limit: params.limit } }
   );
 };
 
