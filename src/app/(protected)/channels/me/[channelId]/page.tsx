@@ -20,6 +20,8 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
   const [messageInput, setMessageInput] = useState("");
   const {
     messages,
+    hasNextPage,
+    isFetching,
     isLoading,
     fetchError,
     sendMessage,
@@ -29,8 +31,8 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
   const { error: wsError } = useWebSocket({ channelId: params.channelId });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const topObserverRef = useRef<HTMLDivElement>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
-  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,32 +40,11 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
 
     try {
       setMessageInput("");
-      setShouldScrollToBottom(true);
       await sendMessage({ content: messageInput });
     } catch (error) {
       console.error("Mesaj gönderme işlemi başarısız:", error);
     }
   };
-
-  useEffect(() => {
-    if (shouldScrollToBottom && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView();
-    }
-  }, [messages, shouldScrollToBottom]);
-
-  useEffect(() => {
-    if (messagesEndRef.current && !isLoading) {
-      messagesEndRef.current.scrollIntoView({ behavior: "auto" });
-    }
-  }, [isLoading]);
-
-  // useEffect(() => {
-  //   const messageList = messageListRef.current;
-  //   if (messageList) {
-  //     messageList.addEventListener("scroll", handleScroll);
-  //     return () => messageList.removeEventListener("scroll", handleScroll);
-  //   }
-  // }, [handleScroll]);
 
   const isFirstMessageInGroup = (index: number) => {
     if (index === 0) return true;
@@ -113,6 +94,8 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
           style={{ scrollBehavior: "smooth" }}
         >
           <div className="py-4">
+            {/* Üst gözlem noktası */}
+            <div ref={topObserverRef} className="h-1" />
             {isLoading && (
               <div className="flex justify-center py-4">
                 <span className="text-sm text-gray-400">

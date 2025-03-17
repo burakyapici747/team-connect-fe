@@ -12,8 +12,7 @@ export const useMessages = (channelId: string) => {
     queryKey: ["messages", channelId],
     queryFn: async ({ pageParam }): Promise<MessageOutput[]> => {
       if (pageParam === undefined) {
-        debugger;
-        const response = await getMessagesByChannelId(channelId);
+        const response = await getMessagesByChannelId(channelId, { limit: 50 });
         return response.data.data;
       } else {
         const response = await getMessagesByChannelIdWithBefore(
@@ -82,7 +81,6 @@ export const useMessages = (channelId: string) => {
     },
 
     onSuccess: (response, variables, context) => {
-      debugger;
       queryClient.setQueryData(["messages", channelId], (old: any) => {
         if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
 
@@ -121,23 +119,6 @@ export const useMessages = (channelId: string) => {
     },
 
     onError: (error, variables, context) => {
-      console.log("onError tetiklendi");
-      console.log(error);
-
-      console.log("variables");
-      console.log(variables);
-      console.log("context");
-      console.log(context);
-      // queryClient.setQueryData(["messages", channelId], (old: any) => {
-      //   if (old === undefined) return { pages: [[response.data.data]], pageParams: [undefined] };
-      //
-      //   const newData = JSON.parse(JSON.stringify(old));
-      //
-      //   if(newData.pages[0][0].id === context.tempId){
-      //     newData.pages[0][0] = response.data.data;
-      //   }
-      //
-      // });
     }
   });
 
