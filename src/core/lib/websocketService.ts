@@ -4,7 +4,7 @@ import SockJS from "sockjs-client";
 class WebSocketService {
   private client: Client | null = null;
   private subscriptions: Map<string, StompSubscription> = new Map();
-  private baseUrl: string = "http://192.168.3.50:8080";
+  private baseUrl: string = "http://192.168.3.62:8080";
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 3;
 

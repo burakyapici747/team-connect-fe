@@ -3,9 +3,12 @@ import {ApiResponse} from "@/shared/api/response/response";
 import {MessageOutput} from "@/features/messages/api/output/MessageOutput";
 import {getMessagesByChannelId, getMessagesByChannelIdWithBefore, sendMessage} from "@/features/messages/api";
 import {useUser} from "@/features/users/hooks/useUser";
+import {useState} from "react";
 
 export const useMessages = (channelId: string) => {
   const queryClient = useQueryClient();
+  const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false);
+  const [loadOlderMessagesError, setLoadOlderMessagesError] = useState<Error | null>(null);
   const { user } = useUser();
 
   const messageQuery = useInfiniteQuery<MessageOutput[], Error>({
@@ -14,11 +17,8 @@ export const useMessages = (channelId: string) => {
       if (pageParam === undefined) {
         const response = await getMessagesByChannelId(channelId, { limit: 50 });
         return response.data.data;
-      } else {
-        const response = await getMessagesByChannelIdWithBefore(
-          channelId,
-          pageParam as string
-        );
+      } else{
+        const response = await getMessagesByChannelId(channelId, { before: pageParam as string, limit: 50 });
         return response.data.data;
       }
     },
@@ -32,11 +32,23 @@ export const useMessages = (channelId: string) => {
     staleTime: Infinity,
   });
 
-  const getMessagesWithBeforeId = async (beforeId: string) => {
+  const loadOlderMessages = async (): Promise<boolean> => {
+    if (!messageQuery.hasNextPage || isLoadingOlderMessages) {
+      return false;
+    }
+
+    setIsLoadingOlderMessages(true);
+    setLoadOlderMessagesError(null);
+
     try {
-      await messageQuery.fetchNextPage({ pageParam: beforeId });
+      await messageQuery.fetchNextPage();
+      return true;
     } catch (error) {
       console.error("Failed to fetch earlier messages:", error);
+      setLoadOlderMessagesError(error instanceof Error ? error : new Error(String(error)));
+      return false;
+    } finally {
+      setIsLoadingOlderMessages(false);
     }
   };
 
@@ -132,6 +144,8 @@ export const useMessages = (channelId: string) => {
     fetchNextPage: messageQuery.fetchNextPage,
     hasNextPage: messageQuery.hasNextPage,
     sendMessage: sendMessageMutation.mutateAsync,
-    getMessagesWithBeforeId,
+    isLoadingOlderMessages,
+    loadOlderMessages,
+    loadOlderMessagesError
   };
 };

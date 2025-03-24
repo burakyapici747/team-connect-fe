@@ -1,9 +1,6 @@
 import { ApiResponse } from "@/shared/api/response/response";
 import { MessageOutput } from "@/features/messages/api/output/MessageOutput";
-import {
-  getAllWithPathVariable,
-  postSingleWithPathVariable,
-} from "@/shared/api/genericAPI";
+import { getAllWithPathVariable, postSingleWithPathVariable } from "@/shared/api/genericAPI";
 import { API_ENDPOINTS } from "@/core/config/axios/api-endpoints";
 
 export const getMessagesByChannelId = async (
@@ -20,13 +17,13 @@ export const getMessagesByChannelId = async (
 
 export const getMessagesByChannelIdWithBefore = async (
     channelId: string,
-    beforeMessageId: string,
+    params: { before?: string, after?: string, limit?: number }
 ): Promise<ApiResponse<MessageOutput[]>> => {
   return getAllWithPathVariable<MessageOutput>(
-    "",
-    API_ENDPOINTS.MESSAGES.DM_CHANNEL_MESSAGES,
-    { channelId },
-    { params: { before: beforeMessageId } }
+      "",
+      API_ENDPOINTS.MESSAGES.DM_CHANNEL_MESSAGES,
+      { channelId },
+      { params: { before: params.before, after: params.after, limit: params.limit } }
   );
 };
 
