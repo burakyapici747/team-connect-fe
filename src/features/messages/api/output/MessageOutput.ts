@@ -31,4 +31,5 @@ export interface MessageOutput {
   reactions: Record<string, number>[];
   author: Author;
   isPending: boolean;
+  isLastMessageGroup: boolean;
 }
