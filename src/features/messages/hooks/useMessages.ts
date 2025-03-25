@@ -1,9 +1,9 @@
 import {useInfiniteQuery, useMutation, useQueryClient,} from "@tanstack/react-query";
 import {ApiResponse} from "@/shared/api/response/response";
 import {MessageOutput} from "@/features/messages/api/output/MessageOutput";
-import {getMessagesByChannelId, getMessagesByChannelIdWithBefore, sendMessage} from "@/features/messages/api";
+import {getMessagesByChannelId, sendMessage} from "@/features/messages/api";
 import {useUser} from "@/features/users/hooks/useUser";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
 export const useMessages = (channelId: string) => {
   const queryClient = useQueryClient();
@@ -23,6 +23,7 @@ export const useMessages = (channelId: string) => {
       }
     },
     getNextPageParam: (lastPage): string | undefined => {
+      if(lastPage.length < 50) return undefined;
       if (lastPage && lastPage.length > 0 && lastPage[lastPage.length - 1].id) {
         return lastPage[lastPage.length - 1].id;
       }
@@ -134,6 +135,14 @@ export const useMessages = (channelId: string) => {
     }
   });
 
+  const addTestMessages = useCallback(async (start: number, end: number) => {
+    for (let i = start; i <= end; i++) {
+      await sendMessageMutation.mutateAsync({
+        content: `Test Message #${i}`
+      });
+    }
+  }, [sendMessageMutation, channelId]);
+
   const allMessages = messageQuery.data?.pages.flat().reverse() || [];
 
   return {
@@ -146,6 +155,7 @@ export const useMessages = (channelId: string) => {
     sendMessage: sendMessageMutation.mutateAsync,
     isLoadingOlderMessages,
     loadOlderMessages,
-    loadOlderMessagesError
+    loadOlderMessagesError,
+    addTestMessages
   };
 };
