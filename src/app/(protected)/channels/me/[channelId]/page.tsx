@@ -23,6 +23,8 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
   const loadTriggerRef = useRef<HTMLDivElement>(null);
   const previousMessagesLengthRef = useRef<number>(0);
   const latestMessageRef = useRef<HTMLDivElement>(null);
+  const [messageStart, setMessageStart] = useState(1);
+  const [messageEnd, setMessageEnd] = useState(50);
 
   const {
     messages,
@@ -34,7 +36,8 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
     fetchNextPage,
     isLoadingOlderMessages,
     loadOlderMessages,
-    loadOlderMessagesError
+    loadOlderMessagesError,
+    addTestMessages
   } = useMessages(params.channelId);
 
   const { error: wsError } = useWebSocket({ channelId: params.channelId });
@@ -293,7 +296,34 @@ export default function DirectMessagePage({ params }: { params: { channelId: str
               )}
             </div>
           </div>
-
+          {/* Test Mesajları için kontrol paneli */}
+          <div className="flex items-center gap-2 px-4 py-2" style={{ borderTop: "1px solid var(--discord-tertiary-bg)" }}>
+            <div className="flex items-center gap-2">
+              <input
+                  type="number"
+                  value={messageStart}
+                  onChange={(e) => setMessageStart(parseInt(e.target.value) || 1)}
+                  className="w-16 p-1 rounded bg-[var(--discord-input-bg)] text-[var(--discord-text)] border border-[var(--discord-tertiary-bg)]"
+                  placeholder="Start"
+                  min="1"
+              />
+              <span className="text-[var(--discord-text-muted)]">-</span>
+              <input
+                  type="number"
+                  value={messageEnd}
+                  onChange={(e) => setMessageEnd(parseInt(e.target.value) || 50)}
+                  className="w-16 p-1 rounded bg-[var(--discord-input-bg)] text-[var(--discord-text)] border border-[var(--discord-tertiary-bg)]"
+                  placeholder="End"
+                  min="1"
+              />
+            </div>
+            <button
+                onClick={() => addTestMessages(messageStart, messageEnd)}
+                className="px-3 py-1 rounded bg-[var(--discord-primary)] text-white text-sm hover:bg-opacity-80"
+            >
+              Test Mesajları Ekle
+            </button>
+          </div>
           {/* Mesaj Gönderme Alanı */}
           <div className="px-4 pb-6">
             <form onSubmit={handleSendMessage}>
