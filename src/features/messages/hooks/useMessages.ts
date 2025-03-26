@@ -135,11 +135,14 @@ export const useMessages = (channelId: string) => {
     }
   });
 
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
   const addTestMessages = useCallback(async (start: number, end: number) => {
     for (let i = start; i <= end; i++) {
       await sendMessageMutation.mutateAsync({
         content: `Test Message #${i}`
       });
+      await sleep(500);
     }
   }, [sendMessageMutation, channelId]);
 
