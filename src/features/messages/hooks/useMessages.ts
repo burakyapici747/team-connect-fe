@@ -4,6 +4,8 @@ import {MessageOutput} from "@/features/messages/api/output/MessageOutput";
 import {getMessagesByChannelId, sendMessage} from "@/features/messages/api";
 import {useUser} from "@/features/users/hooks/useUser";
 import {useCallback, useState} from "react";
+import {faker} from "@faker-js/faker";
+import {MessageSendInput} from "@/features/messages/api/input/MessageSendInput";
 
 export const useMessages = (channelId: string) => {
   const queryClient = useQueryClient();
@@ -53,9 +55,10 @@ export const useMessages = (channelId: string) => {
     }
   };
 
-  const sendMessageMutation = useMutation<ApiResponse<MessageOutput>, Error, { content: string }>({
-    mutationFn: async (requestBody) => {
-      return await sendMessage(channelId, requestBody);
+  const sendMessageMutation = useMutation<ApiResponse<MessageOutput>, Error, { channelId: string; messageData: MessageSendInput }>({
+    mutationFn: async ({channelId, messageData}) => {
+      debugger;
+      return await sendMessage(channelId, messageData);
     },
     onMutate: async (newMessage) => {
       await queryClient.cancelQueries(["messages", channelId]);
@@ -67,7 +70,7 @@ export const useMessages = (channelId: string) => {
       const optimisticMessage: MessageOutput = {
         id: tempId,
         channelId,
-        content: newMessage.content,
+        content: newMessage.messageData.content,
         timestamp: new Date().toISOString(),
         editedTimestamp: null,
         pinned: false,
@@ -139,10 +142,25 @@ export const useMessages = (channelId: string) => {
 
   const addTestMessages = useCallback(async (start: number, end: number) => {
     for (let i = start; i <= end; i++) {
+      const messageType = Math.floor(Math.random() * 3);
+
+      let content = "";
+
+      switch (messageType) {
+        case 0:
+          content = faker.lorem.sentence(3);
+          break;
+        case 1:
+          content = faker.lorem.sentences(2);
+          break;
+        case 2:
+          content = faker.lorem.paragraph();
+          break;
+      }
+
       await sendMessageMutation.mutateAsync({
-        content: `Test Message #${i}`
+        content: `Test Message #${i}: ${content}`
       });
-      await sleep(500);
     }
   }, [sendMessageMutation, channelId]);
 
@@ -155,7 +173,7 @@ export const useMessages = (channelId: string) => {
     isFetching: messageQuery.isFetching,
     fetchNextPage: messageQuery.fetchNextPage,
     hasNextPage: messageQuery.hasNextPage,
-    sendMessage: sendMessageMutation.mutateAsync,
+    sendMessage: (channelId: string, messageData: MessageSendInput) => sendMessageMutation.mutateAsync({ channelId, messageData }),
     isLoadingOlderMessages,
     loadOlderMessages,
     loadOlderMessagesError,
