@@ -43,7 +43,7 @@ const MessageList: React.FC<MessageListProps> = ({
     }, [isLoading, messages]);
 
     useEffect(() => {
-        if (messagesContainerRef.current && latestMessageRef.current && isLoadingOlderMessages === false) {
+        if (messagesContainerRef.current && latestMessageRef.current && !isLoadingOlderMessages) {
             const scrollPosition = latestMessageRef.current.offsetTop;
             messagesContainerRef.current.scrollTop = scrollPosition;
         }

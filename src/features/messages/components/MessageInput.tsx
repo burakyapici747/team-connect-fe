@@ -87,8 +87,6 @@ const MessageInput: React.FC<MessageInputProps> = ({ channelId}) => {
                 multipartFileList: selectedFiles.length > 0 ? selectedFiles : undefined
             };
 
-            debugger;
-
             await sendMessage(channelId, messageData);
 
             setMessageInput("");
