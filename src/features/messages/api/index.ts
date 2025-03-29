@@ -35,11 +35,15 @@ export const sendMessage: (
   channelId: string,
   requestBody: MessageSendInput
 ): Promise<ApiResponse<MessageOutput>> => {
-  debugger;
   return postSingleWithPathVariable<MessageSendInput, MessageOutput>(
     "",
     requestBody,
     API_ENDPOINTS.MESSAGES.SEND_MESSAGE,
-    { channelId }
+    { channelId },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
   );
 };
