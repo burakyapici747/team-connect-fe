@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { DMChannelSidebar } from "@/features/channels/components/DM-channel-sidebar";
-import { TeamSidebar } from "@/features/teams/components/team-sidebar";
+import { SideBarList } from "@/shared/components/layout/SideBarList";
+import { TeamSelectorSidebar } from "@/features/teams/components/TeamSelectorSidebar";
 import { useUser } from "@/features/users/hooks/useUser";
 
 export default function ChannelsLayout({children,}: {
@@ -32,8 +32,8 @@ export default function ChannelsLayout({children,}: {
 
   return (
       <div className="flex h-screen">
-        <TeamSidebar />
-        <DMChannelSidebar />
+        <TeamSelectorSidebar />
+        <SideBarList />
         <main className="flex-1 bg-[#313338]">{children}</main>
       </div>
   );

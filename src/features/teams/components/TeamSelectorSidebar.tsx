@@ -15,9 +15,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
-import {useTeams} from "@/features/teams/hooks/useTeams";
+import { useTeams } from "@/features/teams/hooks/useTeams";
 
-export function TeamSidebar() {
+export function TeamSelectorSidebar() {
   const router = useRouter();
   const params = useParams();
   const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
