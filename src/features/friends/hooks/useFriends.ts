@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getFriendships, getOutgoingFriendRequests, getIncomingFriendRequests } from "@/features/friends/api";
 import { FriendshipOutput } from "@/features/friends/api/output/FriendshipOutput";
 import { ApiResponse } from "@/shared/api/response/response";
+import {infinity} from "effect/Duration";
 
 export const useFriends = () => {
     const currentUserFriendsQuery = useQuery<ApiResponse<FriendshipOutput[]>, Error, FriendshipOutput[]>({
@@ -9,7 +10,7 @@ export const useFriends = () => {
         queryFn: getFriendships,
         select: (response) => {
             if (response.isSuccess) {
-                return response.data;
+                return response.data.data;
             } else {
                 throw new Error(response.message);
             }
@@ -23,7 +24,7 @@ export const useFriends = () => {
         queryFn: getOutgoingFriendRequests,
         select: (response) => {
             if (response.isSuccess) {
-                return response.data;
+                return response.data.data;
             } else {
                 throw new Error(response.message);
             }
@@ -37,7 +38,7 @@ export const useFriends = () => {
         queryFn: getIncomingFriendRequests,
         select: (response) => {
             if (response.isSuccess) {
-                return response.data;
+                return response.data.data;
             } else {
                 throw new Error(response.message);
             }

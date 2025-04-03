@@ -31,10 +31,7 @@ interface MessageItemProps {
   isFirstInGroup: boolean;
 }
 
-const MessageItem: React.FC<MessageItemProps> = ({
-                                                   message,
-                                                   isFirstInGroup,
-                                                 }) => {
+const MessageItem: React.FC<MessageItemProps> = ({message, isFirstInGroup}) => {
   const [showFullImage, setShowFullImage] = useState<string | null>(null);
 
   const formatTime = (timestamp: string) => {
