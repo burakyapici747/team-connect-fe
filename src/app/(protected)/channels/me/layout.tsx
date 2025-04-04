@@ -2,8 +2,12 @@
 
 import React from "react";
 
-export default function DirectMessagesLayout({children,}: {
+export default function DirectMessagesLayout({ children }: {
     children: React.ReactNode;
 }) {
-    return (<>{children}</>);
+    return (
+        <div className="h-full flex flex-col">
+            {children}
+        </div>
+    );
 }
