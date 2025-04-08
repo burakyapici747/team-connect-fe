@@ -77,7 +77,7 @@ class WebSocketService {
       throw new Error("WebSocket client bağlı değil");
     }
 
-    const destination = `/topic/dm.queue.${channelId}`;
+    const destination = `/topic/dm.channel.message.queue.${channelId}`;
     console.log(`WebSocket kanalına abone olunuyor: ${destination}`);
 
     const subscription = this.client.subscribe(destination, callback, {
